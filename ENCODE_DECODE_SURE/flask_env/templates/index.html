@@ -6,11 +6,26 @@
 </head>
 <body>
     <h1>{{ name }}</h1>
-    <form action="{{ url_for("gfg")}}" method="post">
+    <form action="{{ url_for("encoder")}}" method="post">
         <label for="string">Texte :</label>
-        <input type="text" id="text" name="string" placeholder="string">
+        <input type="text" id="text" name="string" placeholder="Votre phrase à encoder (ex: PatatitPatata)">
         <label for="password">Mot de passe :</label>
-        <input type="text" id="password" name="password" placeholder="password">
-        <button type="submit">Login</button>
+        <input type="text" id="password" name="password" placeholder="Votre mot de passe (ex: MDP_SECURE)">
+        <label for="shift">Shift (rot) :</label>
+        <input type="text" id="shift" name="shift" placeholder="La rotation à appliquer en plus, /!\ UN NOMBRE">
+        <button type="submit">Encoder</button>
+    </form>
+    <form action="{{ url_for("decoder")}}" method="post">
+        <label for="string">Texte :</label>
+        <input type="text" id="text" name="string" placeholder="Votre phrase à encoder (ex: PatatitPatata)">
+        <label for="password">Mot de passe :</label>
+        <input type="text" id="password" name="password" placeholder="Votre mot de passe (ex: MDP_SECURE)">
+        <label for="shift">Shift (rot) :</label>
+        <input type="text" id="shift" name="shift" placeholder="La rotation à appliquer en plus, /!\ UN NOMBRE">
+        <button type="submit">Décoder</button>
+    </form>
+    <form target="_blank">
+    </form>
+    <label for="{{ url_for("action")}}">a</label>
 </body>
 </html>
