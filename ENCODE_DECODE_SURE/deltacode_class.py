@@ -3,8 +3,6 @@ import string as s
 import time
 import sys
 import shutil
-from threading import Thread
-
 
 def chercher(txt, premier, deuxieme):
     if deuxieme == "'":
@@ -180,11 +178,25 @@ class Cesar:
 
 
 class ROT:
-    def __init__(self, password: str, string: str):
+    def __init__(self, password: str, string: str, error_input=False):
         self.result = str()
         self.password = password
         self.string = string
         self.password_len = len(password)
+        self.error_input = error_input
+
+    def error(self, error, fatal_error="[FATAL ERROR]"):
+        try:
+            if self.error_input:
+                self.result += error
+            else:
+                print_color(error, color='red', effect='underline')
+        except:
+            if self.error_input:
+                self.result += fatal_error
+            else:
+                print_color(fatal_error, color='red', effect='underline', highlight='True')
+
 
     def encode(self):
         for i in range(len(self.string)):
@@ -198,10 +210,7 @@ class ROT:
                     (s.printable.index(char) + s.printable.index(self.password[i % self.password_len])) % len(s.printable)]
 
             except:
-                try:
-                    self.result += f"[ERROR string:'{s.printable.index(char)}', password:'{self.password[i % self.password_len]}']"
-                except:
-                    self.result += f"[FATAL ERROR: '{char}']"
+                self.error(f"[ERROR string:'{s.printable.index(char)}', password:'{self.password[i % self.password_len]}']", fatal_error=f"[FATAL ERROR: '{char}']")
         return self.result
 
     def decode(self):
@@ -212,10 +221,7 @@ class ROT:
                     char = no_accent_char(char=char)
                 self.result += s.printable[(s.printable.index(char) - s.printable.index(self.password[i % self.password_len]))]
             except:
-                try:
-                    self.result += f"[ERROR self.string:'{s.printable.index(char)}', password:'{self.password[i % self.password_len]}']"
-                except:
-                    self.result += f"[FATAL ERROR: '{char}']"
+                self.error(f"[ERROR string:'{s.printable.index(char)}', password:'{self.password[i % self.password_len]}']", fatal_error=f"[FATAL ERROR: '{char}']")
         return self.result
 
 
@@ -241,13 +247,14 @@ class DayEncoding:
         if shift > 1114111:
             self.error("ERREUR: le shift ne doit pas dépasser 1114111")
             return
-        type_authorized = [str, tuple, list]
+        type_authorized = [str, tuple, list, 'hex']
 
         if type_return not in type_authorized:
-            self.error("ERREUR: les types authorizés sont: str, tuple, list")
+            self.error("ERREUR: les types autorisés sont: str, tuple, list et 'hex'")
             return
 
     def return_(self, string):
+        to_return = None
         if self.type_return is str():
             to_return = str()
             if isinstance(string, list) or isinstance(string, tuple):
@@ -303,7 +310,7 @@ class DayEncoding:
     def debug(self, debug_message):
         if self.debug_var:
             print_color(debug_message, color='green', effect='bold')
-            time.sleep(0.05)
+            time.sleep(0.005)
 
     def encode(self):
         self.string = str(self.string)
@@ -353,7 +360,7 @@ class DayEncoding:
                 try:
                     self.result += chr((ord(char) - ord(self.password[i % self.password_len])) - self.shift)
                 except:
-                    self.error("[ERROR, string:'{char}', password:'{password[i % self.password_len]}']", fatal_error=f"[FATAL ERROR '{char}']")
+                    self.error(f"[ERROR, string:'{char}', password:'{self.password[i % self.password_len]}']", fatal_error=f"[FATAL ERROR '{char}']")
         return self.return_(self.result)
 
 class Deltacode:
@@ -530,16 +537,17 @@ class Deltacode:
             if len(i) > len_max:
                 len_max = len(i) + 4
         calcul = tab*6 + 2*len(end) + len_max + len(str(len(lst))) + 3
-        if calcul > self.center_y:
-
-            if calcul - tab*6 < self.center_y:
+        # print(calcul)
+        if calcul > self.center_y or (calcul + tab*6) > self.center_y:
+            menu_tab = (self.center_y - calcul) * " " + end
+            new_calcul = len(menu_tab) + 2*len(end) + len_max + len(str(len(lst))) + 3
+            if new_calcul > self.center_y:
                 menu_tab = end
-            elif calcul - tab*6 > self.center_y:
+            if new_calcul - 2*len(end) > self.center_y:
                 end = ''
-            else:
-                menu_tab = (self.center_y - calcul) * " " + end
-                print("RESPONSIVE", self.center_y, "\n" + "-" * self.center_y, calcul)
-            menu_tab = menu_tab.replace("    ", "\t")
+                menu_tab = ''
+            # print("RESPONSIVE", self.center_y, "\n" + "-" * self.center_y, calcul)
+            # menu_tab = menu_tab.replace("      ", "\t")
             menu_entry = menu_tab[:-1] + " "
         else:
             menu_entry = (tab * "\t")[:-1] + 4 * ' '
@@ -557,7 +565,7 @@ class Deltacode:
                 before = len(str(number)) + 3
                 end_tab = (len_max - len(i) - before) * ' ' + end
                 menu += f"{menu_tab}[{number}] {i}{end_tab}\n"
-        menu += f"{menu_tab}{'—'*len_max}{end}\n\n{menu_entry}>>"
+        menu += f"{menu_tab}{'—'*len_max}{end}\n\n{menu_entry}>> "
         return menu
 
 
@@ -758,8 +766,7 @@ class Deltacode:
             Password = "DELTA's TEAM BY DAISSEUR"
             Text = "Je ne sais pas pourquoi le mot de passe est en anglais mais bon. Alors ça marche ?"
             self.status = "encode"
-            encoding = DayEncoding(password=Password, string=Text, shift=Shift, debug=True, hexa=True,
-                                   error_input=True).encode()
+            encoding = DayEncoding(password=Password, string=Text, shift=Shift, debug=True, type_return='hex').encode()
             print_color(encoding, color='blue')
             self.add_history(Password, Text, encoding, decode_encode="encode", shift=str(Shift))
             self.status = "decode"
@@ -790,17 +797,17 @@ class Deltacode:
             elif choice == "3":
                 encoding_decoding()
             elif choice == "4":
-                clear_history()
-            elif choice == "5":
-                save_history()
-            elif choice == "6":
-                del_save()
-            elif choice == "7":
-                restart()
-            elif choice == "8":
-                test()
-            elif choice == "9":
                 encode_decode_file()
+            elif choice == "5":
+                clear_history()
+            elif choice == "6":
+                save_history()
+            elif choice == "7":
+                del_save()
+            elif choice == "8":
+                restart()
+            elif choice == "9":
+                test()
 
 
 if __name__ == '__main__':
