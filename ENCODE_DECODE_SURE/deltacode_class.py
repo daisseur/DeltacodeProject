@@ -1,3 +1,5 @@
+# TEAM DELTA / DELTA's TEAM
+# By daisseur, discord: daisseur#7755
 import os
 import string as s
 import time
@@ -429,7 +431,7 @@ class Deltacode:
         elif decode_encode == "decode":
             self.history += f"==DECODE==\n{shift_insert}{self.curly(f'Password = {Password}')}\n{self.curly(f'Texte = {Text}')}\n|--> {coding}\n"
 
-    def input_coding(self, coding_function, decode_encode: str, shift=False, password=True, warning="None", file=False, **kwargs):
+    def input_coding(self, coding_function, decode_encode: str, shift=False, password=True, warning="None", from_file=False, **kwargs):
         if "hexa" in kwargs.keys():
             hexa = kwargs.fromkeys("hexa")
         else:
@@ -450,10 +452,7 @@ class Deltacode:
         else:
             Password = input("Nombre de rotation à effectuer : ")
         self.copy(str(self.text_running))
-        if not file:
-            file = input(f"Voulez-vous {decode_encode}r à partir d'un fichier ? ")
-        if file.lower() == "oui" or file:
-            file = True
+        if from_file:
             while True:
                 filename = input('Nom du fichier : ')
                 if os.path.exists(filename):
@@ -461,8 +460,18 @@ class Deltacode:
                         Text = f.read()
                     break
         else:
-            file = False
-            Text = input('Texte : ')
+            file = input(f"Voulez-vous {decode_encode}r à partir d'un fichier ? ")
+            if file.lower() == "oui":
+                from_file = True
+                while True:
+                    filename = input('Nom du fichier : ')
+                    if os.path.exists(filename):
+                        with open(filename, 'r', encoding='UTF-8') as f:
+                            Text = f.read()
+                        break
+            else:
+                from_file = False
+                Text = input('Texte : ')
         if shift:
             Shift = input("Utiliser le shift ? ")
             if Shift.lower() == "oui":
@@ -486,7 +495,7 @@ class Deltacode:
                 self.text_running = coding
                 self.password_running = Password
                 self.shift_running = Shift
-                if file is True:
+                if from_file is True:
                     return {"Password": Password,
                              "Text": Text,
                              "Encoded": coding,
@@ -507,15 +516,15 @@ class Deltacode:
                 self.add_history(Password, Text, coding, decode_encode, shift=str(Shift))
                 self.shift_running = Shift
         else:
-            if password != True:
-                coding = eval(f"coding_function(rot=Password, string=Text).{self.status}")
+            if decode_encode == "encode":
+                coding = coding_function(Password, Text).encode()
             else:
-                coding = eval(f"coding_function(Password, Text).{self.status}")
+                coding = coding_function(Password, Text).decode()
             print_color(coding, color='blue')
             self.add_history(Password, Text, coding, decode_encode)
         self.text_running = coding
         self.password_running = Password
-        if file is True:
+        if from_file is True:
             return {"Password": Password,
                     "Text": Text,
                     "Encoded": coding,
@@ -580,7 +589,7 @@ class Deltacode:
             self.clear()
             self.status = "encode"
             choice_encode = input(self.create_menu(2, ["Code Cesar",
-                                                       "Rotation avec tous les caractères de l'alphabet",
+                                                       "Rotation avec caractères affichables",
                                                        "Rotation avec tous les caractères existants",
                                                        "Test infaillible"]))
             if choice_encode == "1":
@@ -605,7 +614,7 @@ class Deltacode:
             self.clear()
             self.status = "decode"
             choice_decode = input(self.create_menu(2, ["Code Cesar",
-                                                       "Rotation avec tous les caractères de l'alphabet",
+                                                       "Rotation avec caractères affichables",
                                                        "Rotation avec tous les caractères existants",
                                                        "Test infaillible"]))
             if return_choice:
@@ -630,7 +639,7 @@ class Deltacode:
             self.clear()
             self.status = "encode"
             choice_code = input(self.create_menu(2, ["Code Cesar",
-                                                       "Rotation avec tous les caractères de l'alphabet",
+                                                       "Rotation avec caractères affichables",
                                                        "Rotation avec tous les caractères existants",
                                                        "Test infaillible"]))
             if choice_code == "1":
@@ -645,7 +654,7 @@ class Deltacode:
                 except:
                     print("KEY ERROR")
             elif choice_code == "2":
-                info = self.input_coding(ROT.encode, decode_encode=self.status).copy()
+                info = self.input_coding(ROT, decode_encode=self.status).copy()
                 try:
                     Password = info["Password"]
                     Text = info["Encoded"]
@@ -690,21 +699,21 @@ class Deltacode:
                     self.clear()
                     self.status = encode_decode
                     choice_decode = input(self.create_menu(2, ["Code Cesar",
-                                                               "Rotation avec tous les caractères de l'alphabet",
+                                                               "Rotation avec caractères affichables",
                                                                "Rotation avec tous les caractères existants",
                                                                "Test infaillible"]))
                     if choice_decode == "1":
-                        info = self.input_coding(Cesar, decode_encode=self.status, password=False).copy()
+                        info = self.input_coding(Cesar, decode_encode=self.status, password=False, from_file=True).copy()
                         update = info["Encoded"]
                         filename = info["Filename"]
                         replace_file(filename, update)
                     elif choice_decode == "2":
-                        info = self.input_coding(ROT, decode_encode=self.status).copy()
+                        info = self.input_coding(ROT, decode_encode=self.status, from_file=True).copy()
                         update = info["Encoded"]
                         filename = info["Filename"]
                         replace_file(filename, update)
                     elif choice_decode == "3":
-                        info = self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True).copy()
+                        info = self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True, from_file=True).copy()
                         update = info["Encoded"]
                         filename = info["Filename"]
                         replace_file(filename, update)
@@ -766,7 +775,7 @@ class Deltacode:
             Password = "DELTA's TEAM BY DAISSEUR"
             Text = "Je ne sais pas pourquoi le mot de passe est en anglais mais bon. Alors ça marche ?"
             self.status = "encode"
-            encoding = DayEncoding(password=Password, string=Text, shift=Shift, debug=True, type_return='hex').encode()
+            encoding = DayEncoding(password=Password, string=Text, shift=Shift, debug=True).encode()
             print_color(encoding, color='blue')
             self.add_history(Password, Text, encoding, decode_encode="encode", shift=str(Shift))
             self.status = "decode"
@@ -775,8 +784,8 @@ class Deltacode:
             self.add_history(Password, encoding, decoding, decode_encode="decode", shift=str(Shift))
 
         while True:
-            self.clear()
             self.banner = ' \\\ DELTA // '
+            self.clear()
             choice = input(self.create_menu(2, ["Encoder",
                                                 "Décoder",
                                                 "Encoder et Décoder",
@@ -808,6 +817,7 @@ class Deltacode:
                 restart()
             elif choice == "9":
                 test()
+            time.sleep(0.5)
 
 
 if __name__ == '__main__':
