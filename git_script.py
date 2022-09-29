@@ -173,7 +173,6 @@ if __name__ == "__main__":
     password = input("Mot de passe : ")
     result = DayEncoding(password=password, string=key, shift=250).decode()
     print(result)
-    os.system(f"echo '{str(result)}' | xclip")
     print("Copié !")
     os.system("ls")
     os.system("echo 'ENCODE_DECODE_SURE/*' | xclip")
@@ -192,6 +191,7 @@ if __name__ == "__main__":
                 os.system(f"git rm --cached {rm}")
         else:
             print("Vérifier que le fichier existe bien")
+    os.system(f"echo '{str(result)}' | xclip")
     os.system("git push -u origin main")
 
 
