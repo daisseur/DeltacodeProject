@@ -1,6 +1,6 @@
 from deltacode_class import DayEncoding
 import time
-
+import string as s
 def verif(english_french, result):
     for i in english_french:
         if i in result:
@@ -11,6 +11,9 @@ string = "DELTA's PROJECT"
 password = ""
 english = []
 french = []
+
+with open('ord_exceptions.txt', 'r', encoding='UTF-8') as f:
+    exceptions = str(f.read()).split(",")
 
 start1 = time.perf_counter()
 with open('liste_anglais.txt', 'r', encoding='UTF-8') as f_english:
@@ -32,15 +35,38 @@ while True:
 end = time.perf_counter()
 
 start0 = time.perf_counter()
-while True:
-    for word in french:
-        for i in range(len(french)):
-            for ord in range(11141110):
-                test = repr(DayEncoding(word + ' ' + french[i], string, ord, hexa=False).encode()).replace("'", '')
-                for i_ in english:
-                    if i_ in test:
-                        print("Trouvé :", password, "==>", test)
-                        break
+ifdoc = s.ascii_lowercase
+done = False
+while not done:
+    for i1 in ifdoc:
+        print(i1)
+        start_for = time.perf_counter()
+        for i2 in ifdoc:
+            print("i2", i2)
+            for i3 in ifdoc:
+                print("i3", i3)
+                for i4 in ifdoc:
+                    print("i4", i4)
+                    for i5 in ifdoc:
+                        print("i5", i5)
+                        for i6 in ifdoc:
+                            print("i6", i6)
+                            for i7 in ifdoc:
+                                print("i7", i7)
+                                for i8 in ifdoc:
+                                    print("i8", i8)
+                                    for i9 in ifdoc:
+                                        print("i9", i9)
+                                        for i10 in ifdoc:
+                                            print("i10", i10)
+                                            for ord_ in range(11141110):
+                                                print(ord_)
+                                                test = DayEncoding(password=i1 + i10 + i9 + i8 + i7 + i6 + i5 + i4 + i3 + i2 + i1, string=string, shift=ord_, hexa=False, error_input=False).encode()
+                                                if test in french:
+                                                    print("Trouvé : ")
+                                                    print(test)
+        end_for = time.perf_counter()
+        print(end_for - start_for)
     break
 end0 = time.perf_counter()
 
