@@ -178,17 +178,20 @@ if __name__ == "__main__":
     os.system("ls")
     os.system("echo 'ENCODE_DECODE_SURE/*' | xclip")
     while True:
+        rm_spe = 'NONE'
         rm = input("Selectionner un fichier à supprimer du commit ('entrée' pour quitter) : ")
+        if rm[-2:] == "/*":
+            rm_spe = rm
+            rm = rm[:-2]
         if rm == '':
             break
         elif os.path.exists(rm):
-            if rm[-2:] == "/*":
-                os.system(f"git rm -r --cached {rm}")
+            if rm_spe[-2:] == "/*":
+                os.system(f"git rm -r --cached {rm_spe}")
             else:
                 os.system(f"git rm --cached {rm}")
         else:
             print("Vérifier que le fichier existe bien")
-        break
     os.system("git push -u origin main")
 
 
