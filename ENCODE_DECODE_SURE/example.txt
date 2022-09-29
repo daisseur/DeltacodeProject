@@ -1,2 +1,0 @@
- HEXA = Les charactères encodés et décodés avec cette option sont référencer dans une table de charactère avec un nombre qui leur est propre et ce nombre est transformer en valeur hexadecimal en résultat.
---> Elle a été inventé pour ne pas avoir de charactères tel que des retour à la ligne ou d'autres type d'indentation spéciales qui pourrait nuire au bon déroulement du programme
