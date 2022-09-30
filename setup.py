@@ -1,6 +1,4 @@
-import os
 from setuptools import setup, find_packages
-import base58
 setup(
     name='Deltacode',
     version='0.7.1',
