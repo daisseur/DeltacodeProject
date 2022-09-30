@@ -11,7 +11,6 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
     license=open('LICENSE', 'r').read(),
-    install_requires=['base58'],
     keywords=['python', 'deltacode', 'code', 'coding', 'encoding'],
     classifiers=[
         "Intended Audience :: Developers",
@@ -20,8 +19,4 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
     ]
-<<<<<<< HEAD
-
-=======
->>>>>>> refs/remotes/origin/main
 )
