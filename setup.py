@@ -19,8 +19,4 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
     ]
-<<<<<<< HEAD
-
-=======
->>>>>>> refs/remotes/origin/main
 )
