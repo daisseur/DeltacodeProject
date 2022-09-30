@@ -1,1 +1,1 @@
-import Deltacode
+from Deltacode import *
