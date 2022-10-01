@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name='DeltacodeProject',
-    version='0.7.1',
+    version='0.7.2',
     author='daisseur',
     author_email='daisseur@gmail.com',
     packages=find_packages(),
