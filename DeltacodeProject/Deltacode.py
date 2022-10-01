@@ -4,6 +4,7 @@ import os
 import string as s
 import time
 import sys
+import shutil
 
 def chercher(txt, premier, deuxieme):
     if deuxieme == "'":
