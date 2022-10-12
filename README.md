@@ -24,7 +24,7 @@ Cette opération se répète sur tous les chractères du texte à encoder
 
 ### ROATION AVEC CARACTERES AFFICHABLES (ROT)
 Le mot de passe est transformé en en sa valeur dans une liste regroupant tous les caractère affichable 
-( _0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&""()*+,-./:;<=>?@[\\]^_ _*`{|}~ \t\n\r\x0b\x0c*) \t = tabulation, \n = retour à la ligne, \r = ligne suivante, \x0b = tabulation verticale et \x0c = saut de page.
+(*```0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ \t\n\r\x0b\x0c```*) `\t` = tabulation, `\n` = retour à la ligne, `\r` = ligne suivante, `\x0b` = tabulation verticale et `\x0c` = saut de page.
 
 **Par exemple:**
 Si l'on prend comme mot de passe: *delta pwd* et comme texte à encoder: *github & compagnie*
