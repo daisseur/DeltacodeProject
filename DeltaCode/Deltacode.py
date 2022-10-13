@@ -373,18 +373,8 @@ class Deltacode:
     Example\\Exemple :
 
     """
-    def __init__(self, copy=None):
-        if copy is None:
-            self.use_copy = input("Voulez-vous utiliser la fonction copier ? Elle vous aidera à copier vos mots de passe, et texte déjà encodés directement quand vous en aurez besoin.\n")
-            if self.use_copy.lower() == "oui":
-                self.use_copy = True
-            else:
-                self.use_copy = False
-        elif copy is True:
-            self.use_copy = True
-        elif copy is False:
-            self.use_copy = False
-
+    def __init__(self):
+        self.use_copy = True
         self.valid_char = s.printable
         self.status = "in __init__"
         self.center_y = int(chercher(str(shutil.get_terminal_size()), "columns=", ",").replace("columns=", '').replace(",", ''))
@@ -444,9 +434,9 @@ class Deltacode:
         if hexa:
             hexa = input("Voulez-vous utiliser l'encodage hexadecimal ? ")
             if hexa.lower() == "oui":
-                kwargs["hexa"] = True
+                hexa = True
             else:
-                kwargs["hexa"] = False
+                hexa = False
         if password == True:
             Password = input('Mot de passe : ')
         else:
@@ -485,11 +475,10 @@ class Deltacode:
                     else:
                         Shift = int(Shift)
                         break
-                kwargs["hexa"] = hexa
                 if self.status == 'encode':
-                    coding = coding_function(Password, Text, Shift, kwargs,).encode()
+                    coding = coding_function(Password, Text, Shift, hexa).encode()
                 else:
-                    coding = coding_function(Password, Text, Shift, kwargs,).decode()
+                    coding = coding_function(Password, Text, Shift, hexa).decode()
                 print_color(coding, color='blue')
                 self.add_history(Password, Text, coding, decode_encode, shift=str(Shift))
                 self.text_running = coding
@@ -501,18 +490,18 @@ class Deltacode:
                              "Encoded": coding,
                              "Shift": Shift,
                              "Filename": filename,
-                             "Hexa": kwargs["hexa"]}
+                             "Hexa": hexa}
                 return {"Password": Password,
                  "Text": Text,
                  "Encoded": coding,
                  "Shift": Shift,
-                 "Hexa": kwargs["hexa"]}
+                 "Hexa": hexa}
             else:
                 Shift = 0
                 if self.status == 'encode':
-                    coding = coding_function(Password, Text, Shift, kwargs).encode()
+                    coding = coding_function(Password, Text, Shift, hexa).encode()
                 else:
-                    coding = coding_function(Password, Text, Shift, kwargs).decode()
+                    coding = coding_function(Password, Text, Shift, hexa).decode()
                 self.add_history(Password, Text, coding, decode_encode, shift=str(Shift))
                 self.shift_running = Shift
         else:
@@ -529,11 +518,11 @@ class Deltacode:
                     "Text": Text,
                     "Encoded": coding,
                     "Filename": filename,
-                    "Hexa": kwargs["hexa"]}
+                    "Hexa": hexa}
         return {"Password": Password,
                 "Text": Text,
                 "Encoded": coding,
-                "Hexa": kwargs["hexa"]}
+                "Hexa": hexa}
 
     def create_menu(self, tab: int, lst: list):
         menu_tab = "\t" * tab + "│"
@@ -578,211 +567,223 @@ class Deltacode:
         return menu
 
 
-    def main(self):
-
-        def choice_encoding():
-            """
-            Choice to encoding
-            Choix pour encoder
-            """
-            self.banner += "- ENCODE"
-            self.clear()
-            self.status = "encode"
-            choice_encode = input(self.create_menu(2, ["Code Cesar",
-                                                       "Rotation avec caractères affichables",
-                                                       "Rotation avec tous les caractères existants",
-                                                       "Test infaillible"]))
-            if choice_encode == "1":
-                self.input_coding(Cesar, decode_encode=self.status, password=False)
-            elif choice_encode == "2":
-                self.input_coding(ROT, decode_encode=self.status,
-                                  warning="/!\ S'il y a une lettre avec un accent dans le texte à encoder ou \
-                                  dans le password, la lettre sera transformée pour qu'il n'y ait pas d'accent (à -> a)")
-            elif choice_encode == "3":
-                self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True)
-            elif choice_encode == "4":
-                print("Développement en cours...")
+class main(Deltacode):
+    def __init__(self, copy=None):
+        super().__init__()
+        if copy is None:
+            self.use_copy = input("Voulez-vous utiliser la fonction copier ? Elle vous aidera à copier vos mots de passe, et texte déjà encodés directement quand vous en aurez besoin.\n")
+            if self.use_copy.lower() == "oui":
+                self.use_copy = True
             else:
-                print_color('Invalid choice', color='red', effect='bold')
+                self.use_copy = False
+        elif copy is True:
+            self.use_copy = True
+        elif copy is False:
+            self.use_copy = False
+    def choice_encoding(self):
+        """
+        Choice to encoding
+        Choix pour encoder
+        """
+        self.banner += "- ENCODE"
+        self.clear()
+        self.status = "encode"
+        choice_encode = input(self.create_menu(2, ["Code Cesar",
+                                                   "Rotation avec caractères affichables",
+                                                   "Rotation avec tous les caractères existants",
+                                                   "Test infaillible"]))
+        if choice_encode == "1":
+            self.input_coding(Cesar, decode_encode=self.status, password=False)
+        elif choice_encode == "2":
+            self.input_coding(ROT, decode_encode=self.status,
+                              warning="/!\ S'il y a une lettre avec un accent dans le texte à encoder ou \
+                              dans le password, la lettre sera transformée pour qu'il n'y ait pas d'accent (à -> a)")
+        elif choice_encode == "3":
+            self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True)
+        elif choice_encode == "4":
+            print("Développement en cours...")
+        else:
+            print_color('Invalid choice', color='red', effect='bold')
 
-        def choice_decoding(return_choice=False):
-            """
-            Choice to decoding
-            Choix pour decoder
-            """
-            self.banner += "- DECODE"
-            self.clear()
-            self.status = "decode"
-            choice_decode = input(self.create_menu(2, ["Code Cesar",
-                                                       "Rotation avec caractères affichables",
-                                                       "Rotation avec tous les caractères existants",
-                                                       "Test infaillible"]))
-            if return_choice:
-                return choice_decode
-            if choice_decode == "1":
-                self.input_coding(Cesar, decode_encode=self.status, password=False)
-            elif choice_decode == "2":
-                self.input_coding(ROT, decode_encode=self.status)
-            elif choice_decode == "3":
-                self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True)
-            elif choice_decode == "4":
-                print("Développement en cours...")
-            else:
-                print_color('Invalid choice', color='red', effect='bold')
+    def choice_decoding(self, return_choice=False):
+        """
+        Choice to decoding
+        Choix pour decoder
+        """
+        self.banner += "- DECODE"
+        self.clear()
+        self.status = "decode"
+        choice_decode = input(self.create_menu(2, ["Code Cesar",
+                                                   "Rotation avec caractères affichables",
+                                                   "Rotation avec tous les caractères existants",
+                                                   "Test infaillible"]))
+        if return_choice:
+            return choice_decode
+        if choice_decode == "1":
+            self.input_coding(Cesar, decode_encode=self.status, password=False)
+        elif choice_decode == "2":
+            self.input_coding(ROT, decode_encode=self.status)
+        elif choice_decode == "3":
+            self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True)
+        elif choice_decode == "4":
+            print("Développement en cours...")
+        else:
+            print_color('Invalid choice', color='red', effect='bold')
 
-        def encoding_decoding():
-            """
-            To encode and decode with the encoding that has been chosen
-            Pour encoder et décoder avec l'encodage qui a été choisi
-            """
-            self.banner += "- ENCODE & DECODE"
-            self.clear()
-            self.status = "encode"
-            choice_code = input(self.create_menu(2, ["Code Cesar",
-                                                       "Rotation avec caractères affichables",
-                                                       "Rotation avec tous les caractères existants",
-                                                       "Test infaillible"]))
-            if choice_code == "1":
-                info = self.input_coding(Cesar, decode_encode=self.status, password=False).copy()
-                try:
-                    Password = info["Password"]
-                    Text = info["Encoded"]
-                    self.status = "decode"
-                    coding = Cesar(rot=Password, string=Text).decode()
-                    print_color(coding, color='blue')
-                    self.history += f"==DECODE==\n{self.curly(f'Password = {Password}')}\n{self.curly(f'Texte = {Text}')}\n|--> {coding}\n"
-                except:
-                    print("KEY ERROR")
-            elif choice_code == "2":
-                info = self.input_coding(ROT, decode_encode=self.status).copy()
-                try:
-                    Password = info["Password"]
-                    Text = info["Encoded"]
-                    coding = ROT(Password, Text).decode()
-                    print_color(coding, color='blue')
-                    self.history += f"==DECODE==\n{self.curly(f'Rotation = {Password}')}\n{self.curly(f'Texte = {Text}')}\n|--> {coding}\n"
-                except:
-                    print("KEY ERROR")
-            elif choice_code == "3":
-                info = self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True).copy()
-                try:
-                    Password = info["Password"]
-                    Text = info["Encoded"]
-                    Shift = info["Shift"]
-                    Hexa = info["Hexa"]
-                    self.status = "decode"
-                    coding = DayEncoding(Password, Text, Shift, hexa=Hexa).decode()
-                    print_color(coding, color='blue')
-                    self.history += f"==DECODE==\n{self.curly(f'Shift = {Shift}')}\n{self.curly(f'Password = {Password}')}\n{self.curly(f'Texte = {Text}')}\n|--> {coding}\n"
-                except:
-                    print("KEY ERROR")
+    def encoding_decoding(self):
+        """
+        To encode and decode with the encoding that has been chosen
+        Pour encoder et décoder avec l'encodage qui a été choisi
+        """
+        self.banner += "- ENCODE & DECODE"
+        self.clear()
+        self.status = "encode"
+        choice_code = input(self.create_menu(2, ["Code Cesar",
+                                                   "Rotation avec caractères affichables",
+                                                   "Rotation avec tous les caractères existants",
+                                                   "Test infaillible"]))
+        if choice_code == "1":
+            info = self.input_coding(Cesar, decode_encode=self.status, password=False).copy()
+            try:
+                Password = info["Password"]
+                Text = info["Encoded"]
+                self.status = "decode"
+                coding = Cesar(rot=Password, string=Text).decode()
+                print_color(coding, color='blue')
+                self.history += f"==DECODE==\n{self.curly(f'Password = {Password}')}\n{self.curly(f'Texte = {Text}')}\n|--> {coding}\n"
+            except:
+                print("KEY ERROR")
+        elif choice_code == "2":
+            info = self.input_coding(ROT, decode_encode=self.status).copy()
+            try:
+                Password = info["Password"]
+                Text = info["Encoded"]
+                coding = ROT(Password, Text).decode()
+                print_color(coding, color='blue')
+                self.history += f"==DECODE==\n{self.curly(f'Rotation = {Password}')}\n{self.curly(f'Texte = {Text}')}\n|--> {coding}\n"
+            except:
+                print("KEY ERROR")
+        elif choice_code == "3":
+            info = self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True).copy()
+            try:
+                Password = info["Password"]
+                Text = info["Encoded"]
+                Shift = info["Shift"]
+                Hexa = info["Hexa"]
+                self.status = "decode"
+                coding = DayEncoding(Password, Text, Shift, hexa=Hexa).decode()
+                print_color(coding, color='blue')
+                self.history += f"==DECODE==\n{self.curly(f'Shift = {Shift}')}\n{self.curly(f'Password = {Password}')}\n{self.curly(f'Texte = {Text}')}\n|--> {coding}\n"
+            except:
+                print("KEY ERROR")
 
 
-            elif choice_code == "4":
-                print("Développement en cours...")
-            else:
-                print_color('Invalid choice', color='red', effect='bold')
+        elif choice_code == "4":
+            print("Développement en cours...")
+        else:
+            print_color('Invalid choice', color='red', effect='bold')
 
-        def encode_decode_file():
-            self.clear()
+    def encode_decode_file(self):
+        self.clear()
 
-            def replace_file(filename: str, update: str):
-                with open(filename, 'w') as file:
-                    update = str(update)
-                    file.write(update)
+        def replace_file(filename: str, update: str):
+            with open(filename, 'w') as file:
+                update = str(update)
+                file.write(update)
 
-            while True:
-                encode_decode = input("Encoder ou decoder votre fichier ? ")
-                if encode_decode.lower() == "encoder" or encode_decode.lower() == "decoder":
-                    encode_decode = encode_decode[:-1]
-                    self.banner += f"- {encode_decode.upper()}"
-                    self.clear()
-                    self.status = encode_decode
-                    choice_decode = input(self.create_menu(2, ["Code Cesar",
-                                                               "Rotation avec caractères affichables",
-                                                               "Rotation avec tous les caractères existants",
-                                                               "Test infaillible"]))
-                    if choice_decode == "1":
-                        info = self.input_coding(Cesar, decode_encode=self.status, password=False, from_file=True).copy()
-                        update = info["Encoded"]
-                        filename = info["Filename"]
-                        replace_file(filename, update)
-                    elif choice_decode == "2":
-                        info = self.input_coding(ROT, decode_encode=self.status, from_file=True).copy()
-                        update = info["Encoded"]
-                        filename = info["Filename"]
-                        replace_file(filename, update)
-                    elif choice_decode == "3":
-                        info = self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True, from_file=True).copy()
-                        update = info["Encoded"]
-                        filename = info["Filename"]
-                        replace_file(filename, update)
-                    elif choice_decode == "4":
-                        print("Développement en cours...")
-                    else:
-                        print_color('Invalid choice', color='red', effect='bold')
-                    break
-
+        while True:
+            encode_decode = input("Encoder ou decoder votre fichier ? ")
+            if encode_decode.lower() == "encoder" or encode_decode.lower() == "decoder":
+                encode_decode = encode_decode[:-1]
+                self.banner += f"- {encode_decode.upper()}"
+                self.clear()
+                self.status = encode_decode
+                choice_decode = input(self.create_menu(2, ["Code Cesar",
+                                                           "Rotation avec caractères affichables",
+                                                           "Rotation avec tous les caractères existants",
+                                                           "Test infaillible"]))
+                if choice_decode == "1":
+                    info = self.input_coding(Cesar, decode_encode=self.status, password=False, from_file=True).copy()
+                    update = info["Encoded"]
+                    filename = info["Filename"]
+                    replace_file(filename, update)
+                elif choice_decode == "2":
+                    info = self.input_coding(ROT, decode_encode=self.status, from_file=True).copy()
+                    update = info["Encoded"]
+                    filename = info["Filename"]
+                    replace_file(filename, update)
+                elif choice_decode == "3":
+                    info = self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True, from_file=True).copy()
+                    update = info["Encoded"]
+                    filename = info["Filename"]
+                    replace_file(filename, update)
+                elif choice_decode == "4":
+                    print("Développement en cours...")
                 else:
                     print_color('Invalid choice', color='red', effect='bold')
-                    time.sleep(0.5)
+                break
 
-        def clear_history():
-            """
-            To clear the program history
-            Pour effacer l'historique du programme
-            """
-            self.clear(effect='strike')
-            time.sleep(0.5)
-            self.history = "\nL'historique actuelle a été vidé"
-            self.clear()
-            time.sleep(0.5)
-            self.history = "\n"
+            else:
+                print_color('Invalid choice', color='red', effect='bold')
+                time.sleep(0.5)
 
-        def save_history():
-            """
-            To save the program history
-            Pour sauvegarder l'historique du programme
-            """
-            with open("historique.txt", "a", encoding='utf-8') as f:
-                f.write(self.history)
-            print_color("L'historique a été sauvegardé", effect="italic")
-            time.sleep(0.5)
-            self.clear()
+    def clear_history(self):
+        """
+        To clear the program history
+        Pour effacer l'historique du programme
+        """
+        self.clear(effect='strike')
+        time.sleep(0.5)
+        self.history = "\nL'historique actuelle a été vidé"
+        self.clear()
+        time.sleep(0.5)
+        self.history = "\n"
 
-        def del_save():
-            self.clear(effect='strike', color='red')
-            time.sleep(0.5)
-            self.history = "\n"
-            try:
-                os.remove("historique.txt")
-            except:
-                with open('historique.txt', 'w') as f:
-                    f.write("deleted")
-                save_history()
-            self.clear()
-            print_color("La sauvegarde de l'historique a été supprimé", effect="italic")
+    def save_history(self):
+        """
+        To save the program history
+        Pour sauvegarder l'historique du programme
+        """
+        with open("historique.txt", "a", encoding='utf-8') as f:
+            f.write(self.history)
+        print_color("L'historique a été sauvegardé", effect="italic")
+        time.sleep(0.5)
+        self.clear()
 
-        def restart():
-            try:
-                os.execl(sys.executable, sys.executable, *sys.argv)
-            except:
-                print_color("Cette fonction n'est actuellement pas fonctionnel sur votre appareil", color="red", effect="bold")
-                time.sleep(1.5)
+    def del_save(self):
+        self.clear(effect='strike', color='red')
+        time.sleep(0.5)
+        self.history = "\n"
+        try:
+            os.remove("historique.txt")
+        except:
+            with open('historique.txt', 'w') as f:
+                f.write("deleted")
+            self.save_history()
+        self.clear()
+        print_color("La sauvegarde de l'historique a été supprimé", effect="italic")
 
-        def test():
-            Shift = 10
-            Password = "DELTA's TEAM BY DAISSEUR"
-            Text = "Je ne sais pas pourquoi le mot de passe est en anglais mais bon. Alors ça marche ?"
-            self.status = "encode"
-            encoding = DayEncoding(password=Password, string=Text, shift=Shift, debug=True).encode()
-            print_color(encoding, color='blue')
-            self.add_history(Password, Text, encoding, decode_encode="encode", shift=str(Shift))
-            self.status = "decode"
-            decoding = DayEncoding(Password, encoding, Shift, hexa=True, debug=True, error_input=True).decode()
-            print_color(decoding, color='blue')
-            self.add_history(Password, encoding, decoding, decode_encode="decode", shift=str(Shift))
+    def restart(self):
+        try:
+            os.execl(sys.executable, sys.executable, *sys.argv)
+        except:
+            print_color("Cette fonction n'est actuellement pas fonctionnel sur votre appareil", color="red", effect="bold")
+            time.sleep(1.5)
 
+    def test(self):
+        Shift = 10
+        Password = "DELTA's TEAM BY DAISSEUR"
+        Text = "Je ne sais pas pourquoi le mot de passe est en anglais mais bon. Alors ça marche ?"
+        self.status = "encode"
+        encoding = DayEncoding(password=Password, string=Text, shift=Shift, debug=True).encode()
+        print_color(encoding, color='blue')
+        self.add_history(Password, Text, encoding, decode_encode="encode", shift=str(Shift))
+        self.status = "decode"
+        decoding = DayEncoding(Password, encoding, Shift, hexa=True, debug=True, error_input=True).decode()
+        print_color(decoding, color='blue')
+        self.add_history(Password, encoding, decoding, decode_encode="decode", shift=str(Shift))
+
+    def run(self):
         while True:
             self.banner = ' \\\ DELTA // '
             self.clear()
@@ -800,25 +801,25 @@ class Deltacode:
                                                 " ",
                                                 ]))
             if choice == '1':
-                choice_encoding()
+                self.choice_encoding()
             elif choice == '2':
-                choice_decoding()
+                self.choice_decoding()
             elif choice == "3":
-                encoding_decoding()
+                self.encoding_decoding()
             elif choice == "4":
-                encode_decode_file()
+                self.encode_decode_file()
             elif choice == "5":
-                clear_history()
+                self.clear_history()
             elif choice == "6":
-                save_history()
+                self.save_history()
             elif choice == "7":
-                del_save()
+                self.del_save()
             elif choice == "8":
-                restart()
+                self.restart()
             elif choice == "9":
-                test()
+                self.test()
             time.sleep(0.5)
 
 
 if __name__ == '__main__':
-    Deltacode(copy=True).main()
+    main(copy=True).run()
