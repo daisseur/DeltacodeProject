@@ -893,5 +893,5 @@ class main(Deltacode):
             time.sleep(0.5)
 
 
-if __name__ == '__main__' or sys.argv[2] == "debug":
+if __name__ == '__main__' or "debug" in sys.argv:
     main(copy=True).run()
