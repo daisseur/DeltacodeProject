@@ -1,10 +1,10 @@
-from DeltacodeProject.Deltacode import Deltacode, DayEncoding
+from DeltacodeProject.DeltacodeProject import Deltacode, DayEncoding
 import tkinter as tk
 from tkinter import StringVar, Entry, Label, Button, Tk, Frame, Listbox
 from clipboard import copy
 
-class main:
 
+class main:
     def __init__(self):
         self.main = Tk()
         self.main.geometry("750x750")

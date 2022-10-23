@@ -1,5 +1,6 @@
 # TEAM DELTA / DELTA's TEAM
 # By daisseur, discord: daisseur#7755
+import codecs
 import os
 import string as s
 import time
@@ -228,14 +229,18 @@ class ROT:
 
 
 class DayEncoding:
-    def __init__(self, password: str, string, shift: int, hexa=True, debug=False, error_input=True, type_return=str):
+    def __init__(self, password: str, string, shift: int, hexa=True, bin=False, debug=False, error_input=True, type_return=str):
         self.result = str()
         self.password_len = len(password)
         self.string = string
         self.password = password
         self.shift = shift
         self.type_return = eval("type_return" + "()")
-        self.hexa = hexa
+        if hexa is True and bin is False:
+            self.hexa = True
+        else:
+            self.hexa = False
+        self.bin = bin
         self.debug_var = debug
         self.error_input = error_input
         self.debug(f"DayEncoding vient d'être appelée, result = {type(self.result)} = {self.result}")
@@ -314,16 +319,37 @@ class DayEncoding:
             print_color(debug_message, color='green', effect='bold')
             time.sleep(0.005)
 
+    def deciToBin(self, n):
+        return bin(n).replace("0b", '')
+
+    def binToDeci(self, n):
+        return int(n, 2)
+
+    def isBin(self, string):
+        self.debug(string)
+        if len(str(len(string))) > 1:
+            if not isinstance(int(str(string[-2] + string[-1])) / 4, int):
+                return False
+        else:
+            if not isinstance(int(string[-1]) / 4, int):
+                return False
+        for ln in string:
+            if ln != "0" or ln != "1":
+                return False
+        return True
+
     def encode(self):
         self.string = str(self.string)
         for i in range(len(self.string)):
             char = self.string[i]
             try:
                 if self.hexa:
+                    self.debug("hexa")
                     self.result = tuple(self.result)
                     encoding = hex((ord(char) + ord(self.password[i % self.password_len])) + self.shift % 1114111)
                     self.debug(f"'{char}' / {hex(ord(char))} == '{chr((ord(char) + ord(self.password[i % self.password_len])) + self.shift % 1114111)}' / {encoding}")
                 else:
+                    self.debug("normal")
                     encoding = chr((ord(char) + ord(self.password[i % self.password_len])) + self.shift % 1114111)
                     self.debug(encoding)
 
@@ -337,6 +363,7 @@ class DayEncoding:
         self.result = str()
         self.debug(f"string = {self.string}")
         if self.hexa:
+            self.debug("hexa")
             to_tuple = list()
             if isinstance(self.string, str):
                 for hexa in self.string[2:].split('0x'):
@@ -356,6 +383,35 @@ class DayEncoding:
                     self.debug(f"'{chr(int(i, 16))}' / {i} == '{self.result[-1]}' / {hex((letter_ord - self.shift) % 1114111)}\n{self.result}")
                     nbr += 1
                 return self.return_(self.result)
+        elif self.bin:
+            self.debug("bin")
+            to_tuple = list()
+            if isinstance(self.string, str):
+                if self.isBin(self.string):
+                    index = 0
+                    while index != len(self.string):
+                        index += 4
+                        to_tuple.append(self.string[index-4::index])
+                else:
+                    for hexa in self.string[2:].split('0x'):
+                        to_tuple.append('0x' + hexa)
+            elif isinstance(self.string, tuple) or isinstance(self.string, list):
+                to_tuple = self.string
+            try:
+                string = tuple(to_tuple)
+            except:
+                self.error("Une erreur s'est produite lors de la préparation au décodage")
+            else:
+                nbr = 0
+                self.debug(string)
+                for i in string:
+                    letter_ord = int(i, 2)
+                    self.result += chr(
+                        (letter_ord - ord(self.password[nbr % self.password_len]) - self.shift) % 1114111)
+                    self.debug(
+                        f"'{chr(int(i, 16))}' / {i} == '{self.result[-1]}' / {hex((letter_ord - self.shift) % 1114111)}\n{self.result}")
+                    nbr += 1
+                return self.return_(self.result)
         else:
             for i in range(len(self.string)):
                 char = self.string[i]
@@ -368,7 +424,7 @@ class DayEncoding:
 class Deltacode:
     """                                                 \\\ DELTA-ENCODING //
     To decode or encode a text/string with rotation using all the existing characters.
-    Pour encoder ou décoder un texte ou une chaîne de charactères avec une rotation utilisant tous les charactères existants.
+    Pour encoder ou décoder un texte ou une chaîne de caractères avec une rotation utilisant tous les caractères existants.
 
     Example\\Exemple :
 
@@ -427,6 +483,11 @@ class Deltacode:
         else:
             hexa = None
             kwargs["hexa"] = None
+        if "bin" in kwargs.keys():
+            bin = kwargs.fromkeys("bin")
+        else:
+            bin = None
+            kwargs["bin"] = None
         self.clear()
         if warning != "None":
             print_color(warning, color='yellow', effect='underline')
@@ -437,7 +498,13 @@ class Deltacode:
                 hexa = True
             else:
                 hexa = False
-        if password == True:
+                bin = input("Voulez-vous utiliser l'encodage binaire ?")
+                if bin.lower() == "oui":
+                    bin = True
+                else:
+                    bin = False
+
+        if password:
             Password = input('Mot de passe : ')
         else:
             Password = input("Nombre de rotation à effectuer : ")
@@ -476,9 +543,9 @@ class Deltacode:
                         Shift = int(Shift)
                         break
                 if self.status == 'encode':
-                    coding = coding_function(Password, Text, Shift, hexa).encode()
+                    coding = coding_function(Password, Text, Shift, hexa=hexa, bin=bin).encode()
                 else:
-                    coding = coding_function(Password, Text, Shift, hexa).decode()
+                    coding = coding_function(Password, Text, Shift, hexa=hexa, bin=bin).decode()
                 print_color(coding, color='blue')
                 self.add_history(Password, Text, coding, decode_encode, shift=str(Shift))
                 self.text_running = coding
@@ -490,18 +557,20 @@ class Deltacode:
                              "Encoded": coding,
                              "Shift": Shift,
                              "Filename": filename,
-                             "Hexa": hexa}
+                             "Hexa": hexa,
+                             "Bin": bin}
                 return {"Password": Password,
                  "Text": Text,
                  "Encoded": coding,
                  "Shift": Shift,
-                 "Hexa": hexa}
+                 "Hexa": hexa,
+                 "Bin": bin}
             else:
                 Shift = 0
                 if self.status == 'encode':
-                    coding = coding_function(Password, Text, Shift, hexa).encode()
+                    coding = coding_function(Password, Text, Shift, hexa=hexa, bin=bin).encode()
                 else:
-                    coding = coding_function(Password, Text, Shift, hexa).decode()
+                    coding = coding_function(Password, Text, Shift, hexa=hexa, bin=bin).decode()
                 self.add_history(Password, Text, coding, decode_encode, shift=str(Shift))
                 self.shift_running = Shift
         else:
@@ -518,11 +587,13 @@ class Deltacode:
                     "Text": Text,
                     "Encoded": coding,
                     "Filename": filename,
-                    "Hexa": hexa}
+                    "Hexa": hexa,
+                    "Bin": bin}
         return {"Password": Password,
                 "Text": Text,
                 "Encoded": coding,
-                "Hexa": hexa}
+                "Hexa": hexa,
+                "Bin": bin}
 
     def create_menu(self, tab: int, lst: list):
         menu_tab = "\t" * tab + "│"
@@ -624,7 +695,7 @@ class main(Deltacode):
         elif choice_decode == "2":
             self.input_coding(ROT, decode_encode=self.status)
         elif choice_decode == "3":
-            self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True)
+            self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True, bin=True)
         elif choice_decode == "4":
             print("Développement en cours...")
         else:
@@ -664,14 +735,15 @@ class main(Deltacode):
             except:
                 print("KEY ERROR")
         elif choice_code == "3":
-            info = self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True).copy()
+            info = self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True, bin=True).copy()
             try:
                 Password = info["Password"]
                 Text = info["Encoded"]
                 Shift = info["Shift"]
                 Hexa = info["Hexa"]
+                Bin = info["Bin"]
                 self.status = "decode"
-                coding = DayEncoding(Password, Text, Shift, hexa=Hexa).decode()
+                coding = DayEncoding(Password, Text, Shift, hexa=Hexa, bin=Bin).decode()
                 print_color(coding, color='blue')
                 self.history += f"==DECODE==\n{self.curly(f'Shift = {Shift}')}\n{self.curly(f'Password = {Password}')}\n{self.curly(f'Texte = {Text}')}\n|--> {coding}\n"
             except:
@@ -713,7 +785,7 @@ class main(Deltacode):
                     filename = info["Filename"]
                     replace_file(filename, update)
                 elif choice_decode == "3":
-                    info = self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True, from_file=True).copy()
+                    info = self.input_coding(DayEncoding, decode_encode=self.status, shift=True, hexa=True, bin=True, from_file=True).copy()
                     update = info["Encoded"]
                     filename = info["Filename"]
                     replace_file(filename, update)
@@ -821,5 +893,5 @@ class main(Deltacode):
             time.sleep(0.5)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' or sys.argv[2] == "debug":
     main(copy=True).run()
