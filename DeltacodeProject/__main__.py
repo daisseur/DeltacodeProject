@@ -1,15 +1,16 @@
 # __main__.py
 
 import sys
-from DeltacodeProject.DeltacodeProject import main
+from DeltacodeProject.DeltacodeProject import main as menu
 from DeltacodeProject import main as ui
 
-def main():
+def code():
 	"""Encode & Decode"""
 	
 	if ".ui" in sys.argv:
 		ui().run()
 	else:
-		main().run()
+		menu().run()
+		
 if __name__ == "__main__":
-	main()
+	code()
