@@ -839,7 +839,8 @@ class main(Deltacode):
 
     def restart(self):
         try:
-            os.execl(sys.executable, sys.executable, *sys.argv)
+            os.execl(__file__, *sys.argv)
+            exit(0)
         except:
             print_color("Cette fonction n'est actuellement pas fonctionnel sur votre appareil", color="red", effect="bold")
             time.sleep(1.5)
