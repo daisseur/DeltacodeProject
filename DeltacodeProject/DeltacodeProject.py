@@ -639,8 +639,10 @@ class Deltacode:
 
 
 class main(Deltacode):
+    
     def __init__(self, copy=None):
         super().__init__()
+        sys.tracebacklimit = 0
         if copy is None:
             self.use_copy = input("Voulez-vous utiliser la fonction copier ? Elle vous aidera à copier vos mots de passe, et texte déjà encodés directement quand vous en aurez besoin.\n")
             if self.use_copy.lower() == "oui":
