@@ -2,7 +2,7 @@
 
 import sys
 from DeltacodeProject.DeltacodeProject import main as menu
-from DeltacodeProject import main as ui
+from DeltacodeProject.main import main as ui
 
 def code():
 	"""Encode & Decode"""
