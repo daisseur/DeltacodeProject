@@ -168,7 +168,8 @@ class main_manual:
     def run(self):
         self.main.mainloop()
 
-main().run()
+if __name__ == '__main__':
+    main().run()
 
 """class main:
 
