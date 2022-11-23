@@ -1,5 +1,9 @@
 # DELTACODE PROJECT
 Bienvenue sur mon projet !
+
+## Installation
+`pip install DeltacodeProject`
+
 > En quoi consiste-il ?
 
 A **décoder et encoder** du texte, plusieurs encodage sont disponibles:
