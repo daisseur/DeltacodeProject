@@ -508,8 +508,10 @@ class Deltacode:
 
 
 class main(Deltacode):
+    
     def __init__(self, copy=None):
         super().__init__()
+        sys.tracebacklimit = 0
         if copy is None:
             self.use_copy = input("Voulez-vous utiliser la fonction copier ? Elle vous aidera à copier vos mots de passe, et texte déjà encodés directement quand vous en aurez besoin.\n")
             if self.use_copy.lower() == "oui":
@@ -706,7 +708,8 @@ class main(Deltacode):
 
     def restart(self):
         try:
-            os.execl(sys.executable, sys.executable, *sys.argv)
+            os.execl(__file__, *sys.argv)
+            exit(0)
         except:
             print_color("Cette fonction n'est actuellement pas fonctionnel sur votre appareil", color="red", effect="bold")
             time.sleep(1.5)

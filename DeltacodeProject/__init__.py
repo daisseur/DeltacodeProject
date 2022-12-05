@@ -4,5 +4,5 @@ A venir...
 """
 
 __title__ = "DeltacodeProject"
-__version__ = "0.7.27"
+__version__ = "0.7.28.4"
 
