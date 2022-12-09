@@ -1,0 +1,103 @@
+Metadata-Version: 2.1
+Name: DeltacodeProject
+Version: 0.7.28.5
+Summary: Encoder et décoder du texte à l'aide de pluisieurs types d'encodages
+Home-page: https://github.com/daisseur/Deltacode_project
+Author: daisseur
+Author-email: daisseur@gmail.com
+License: MIT License
+        
+        Copyright (c) [year] [fullname]
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        
+Keywords: python,deltacode,code,coding,encoding
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: Unix
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# DELTACODE PROJECT
+Bienvenue sur mon projet !
+
+## Installation
+`pip install DeltacodeProject`
+
+> En quoi consiste-il ?
+
+A **dÃ©coder et encoder** du texte, plusieurs encodage sont disponibles:
+
+![CODING CHOICE](https://user-images.githubusercontent.com/100715068/192147470-1abae55e-1e70-49a4-ac8b-e62df8c5283e.png)
+
+### LE CODE CESAR (CESAR)
+La version plus 'classique' de la rotation est *le code cesar*, on fait exactement la mÃªme opÃ©ration mais avec l'alphabet. Mais le dÃ©savantage de cette mÃ©thode est que les charactÃ¨res spÃ©ciaux de sont pas encodÃ©s et ignorÃ©s comme les espaces.
+
+**Par exemple:**
+Si l'on prend comme mot de passe: *delta pwd* et comme texte Ã  encoder: *github & compagnie*
+
+- *(premier charactÃ¨re du texte Ã  encoder =)* **g** + *(premier charactÃ¨re du mot de passe =)* **d**
+- On rÃ©cupÃ¨re leur valeur respective dans _**l'alphabet**_ *(a=1)* et on les aditionnent, ce qui nous donne:
+- *g* = **7** + *d* = **4**
+- **= 11**
+- Valeur que l'on va rÃ©cupÃ©rer dans la l'alphabet
+- Notre charactÃ¨re encodÃ© est donc **k**, ainsi **g** = *k*
+
+
+Cette opÃ©ration se rÃ©pÃ¨te sur tous les chractÃ¨res du texte Ã  encoder
+
+### ROATION AVEC CARACTERES AFFICHABLES (ROT)
+Le mot de passe est transformÃ© en en sa valeur dans une liste regroupant tous les caractÃ¨re affichable 
+(*```0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ \t\n\r\x0b\x0c```*) `\t` = tabulation, `\n` = retour Ã  la ligne, `\r` = ligne suivante, `\x0b` = tabulation verticale et `\x0c` = saut de page.
+
+**Par exemple:**
+Si l'on prend comme mot de passe: *delta pwd* et comme texte Ã  encoder: *github & compagnie*
+
+- *(premier caractÃ¨re du texte Ã  encoder =)* **g** + *(premier caractÃ¨re du mot de passe =)* **d**
+- On rÃ©cupÃ¨re leur valeur respective dans la _**liste des caractÃ¨res affichables**_ et on les aditionnent, ce qui nous donne:
+- *g* = **16** + *d* = **13**
+- **= 29**
+- Valeur que l'on va rÃ©cupÃ©rer dans la table ascii
+- Notre caractÃ¨re encodÃ© est donc **t**, ainsi **g** = *t*
+
+Cette opÃ©ration se rÃ©pÃ¨te sur tous les chractÃ¨res du texte Ã  encoder ce qui nous donne **twOKE5}IBzDvJxcD**
+
+### LA ROTATION AVEC TOUS LES CARACTERES EXISTANTS (DAYENCODING)
+Le mot de passe est transformÃ© en en sa valeur dans la table ascii que l'on peut rÃ©cupÃ©rÃ© avec ord()
+
+**Par exemple:**
+Si l'on prend comme mot de passe: *delta pwd* et comme texte Ã  encoder: *github & compagnie*
+
+- *(premier charactÃ¨re du texte Ã  encoder =)* **g** + *(premier charactÃ¨re du mot de passe =)* **d**
+- On rÃ©cupÃ¨re leur valeur respective dans la _**table ascii**_ et on les aditionnent, ce qui nous donne:
+- *g* = **103** + *d* = **100**
+- **= 203**
+- Valeur que l'on va rÃ©cupÃ©rer dans la table ascii
+- Notre charactÃ¨re encodÃ© est donc **Ã‹**, ainsi **g** = *Ã‹*
+
+Cette opÃ©ration se rÃ©pÃ¨te sur tous les chractÃ¨res du texte Ã  encoder
+
+#### LA CONVERSION HEXADECIMALE
+Il est possible de convertire son rÃ©sultat en valeurs hexadecimales
+
+## LE MENU
+Un menu a Ã©tÃ© mis en place et est intÃ©grer au programme, ils vous permettra de naviguer entre les diffÃ©rents encodages et options d'encodage, il peut s'adapter Ã  la taille de votre terminal.
+![MENU](https://user-images.githubusercontent.com/100715068/192147511-73e89c0b-d1c7-4046-a291-c848e6f1810e.png)
