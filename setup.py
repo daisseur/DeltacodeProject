@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name='DeltacodeProject',
-    version='0.7.28.5',
+    version='0.7.29.1',
     author='daisseur',
     author_email='daisseur@gmail.com',
     packages=find_packages(),
@@ -10,12 +10,11 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
     license=open('LICENSE', 'r').read(),
-    keywords=['python', 'deltacode', 'code', 'coding', 'encoding'],
+    keywords=['python', 'deltacode', 'code', 'coding', 'encoding', 'DayEncoding', 'ROT', 'Cesar'],
     classifiers=[
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3",
         "Operating System :: Unix",
-        "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
     ]
 )

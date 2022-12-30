@@ -1,0 +1,7 @@
+line = "exemplecomplicado"
+pwd = "exemple pwd"
+to_encode = "hey salut je suis un exemple"
+
+for l in pwd... 
+
+##Il faut faire une classe qui pourra être décodé et qui contien tous les parametres

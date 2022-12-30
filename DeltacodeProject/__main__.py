@@ -9,7 +9,7 @@ def code():
 		from DeltacodeProject.main import main as ui
 		ui().run()
 	else:
-		from DeltacodeProject.DeltacodeProject import main as menu
+		from DeltacodeProject.Deltacode import main as menu
 		menu().run()
 		
 if __name__ == "__main__":

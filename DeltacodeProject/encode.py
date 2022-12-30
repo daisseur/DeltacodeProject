@@ -4,11 +4,12 @@ from getpass import getpass
 print(sys.argv)
 print(os.getcwd())
 try:
-    from DeltacodeProject.DeltacodeProject import DayEncoding
+    from DeltacodeProject.ALL_ENCODING import DayEncoding
 except Exception:
+    os.system("py -m pip install --upgrade DeltacodeProject")
     os.system("pip install --upgrade DeltacodeProject")
     try:
-        from DeltacodeProject.DeltacodeProject import DayEncoding
+        from DeltacodeProject.ALL_ENCODING import DayEncoding
     except:
         raise Exception
 password = str()
