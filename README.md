@@ -64,7 +64,7 @@ Le but est de pouvoir encoder et décoder un objet mais en pouvant garder les pa
 1.
 ```py
 # On importe les classes d'encodages
-from DeltacodePRoject.encodings2 import *
+from DeltacodeProject.encodings2 import *
 
 # On créé un objet `DayEncoding` avec l'argument `password` obligatoire mais sans fournir de texte
 encoding = DayEncoding(password="Mon mot de passe")
