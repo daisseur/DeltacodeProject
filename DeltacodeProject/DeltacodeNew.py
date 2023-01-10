@@ -1,28 +1,22 @@
 # TEAM DELTA / DELTA's TEAM
 # By daisseur, discord : daisseur#7755
 
-import inspect
 import os
-import string as s
-import time
 import sys
 import shutil
-from scripts import *
-from ALL_ENCODING_2 import ROT as rotation
-from ALL_ENCODING_2 import DayEncoding as DD
-from ALL_ENCODING_2 import Cesar as ceasar
+from DeltacodeProject.scripts import *
+from DeltacodeProject.encodings2 import *
+from time import sleep
+import string as s
+
 
 class Deltacode:
     """                                                 \\\ DELTA-ENCODING //
     To decode or encode a text/string with rotation using all the existing characters.
     Pour encoder ou décoder un texte ou une chaîne de caractères avec une rotation utilisant tous les caractères existants.
 
-    Example\\Exemple :
-
     """
 
-    # Ce serait bien de faire que pour chaque encodage on mette une classe comme ça : Deltacode(DayEncoding, Cesar) et
-    # Deltacode s'adapterait.
     def __init__(self, *args):
         print(args[0])
         self.encodings = {}
@@ -43,13 +37,12 @@ class Deltacode:
         print(self.class_encodings)
         for class_ in self.class_encodings:
             self.create_class_func(class_.__name__, class_)
-        time.sleep(1)
         self.use_copy = True
         self.valid_char = s.printable
         self.status = "in __init__"
         self.center_y = int(
             chercher(str(shutil.get_terminal_size()), "columns=", ",", replace=True))
-        self.banner = ' \\\ DELTA // '
+        self.banner = ' \\\ DELTACODE // '
         self.password_running = None
         self.text_running = None
         self.shift_running = 0
@@ -182,9 +175,9 @@ class Deltacode:
                     coding = coding_function(Password, Text, Shift, hexa=hexa).encode()
                 else:
                     coding = coding_function(Password, Text, Shift, hexa=hexa).decode()
-                print_color(coding, color='blue')
-                self.add_history(Password, Text, coding, decode_encode, shift=str(Shift))
-                self.text_running = coding
+                print_color(coding.string, color='blue')
+                self.add_history(Password, Text, coding.string, decode_encode, shift=str(Shift))
+                self.text_running = coding.string
                 self.password_running = Password
                 self.shift_running = Shift
                 return input_return()
@@ -194,7 +187,7 @@ class Deltacode:
                     coding = coding_function(Password, Text, Shift, hexa=hexa).encode()
                 else:
                     coding = coding_function(Password, Text, Shift, hexa=hexa).decode()
-                self.add_history(Password, Text, coding, decode_encode, shift=str(Shift))
+                self.add_history(Password, Text, coding.string, decode_encode, shift=str(Shift))
                 self.shift_running = Shift
                 return input_return()
         else:
@@ -202,9 +195,9 @@ class Deltacode:
                 coding = coding_function(Password, Text).encode()
             else:
                 coding = coding_function(Password, Text).decode()
-            print_color(coding, color='blue')
-            self.add_history(Password, Text, coding, decode_encode)
-        self.text_running = coding
+            print_color(coding.string, color='blue')
+            self.add_history(Password, Text, coding.string, decode_encode)
+        self.text_running = coding.string
         self.password_running = Password
         return input_return()
 
@@ -372,7 +365,7 @@ class main(Deltacode):
                 self.status = "decode"
                 coding = info[1].decode()
                 print_color(coding, color="blue")
-                self.add_history(Password=info[1].password, Text=info[1], coding=coding, decode_encode=self.status, shift=coding.shift if shift else "None")
+                self.add_history(Password=info[1].password, Text=info[1], coding=coding.string, decode_encode=self.status, shift=coding.shift if shift else "None")
                 break
             elif choice_code == "4":
                 print("Développement en cours...")
@@ -427,7 +420,7 @@ class main(Deltacode):
                     print_color('Invalid choice', color='red', effect='bold')
             else:
                 print_color('Invalid choice', color='red', effect='bold')
-                time.sleep(0.5)
+                sleep(0.5)
 
     def clear_history(self):
         """
@@ -435,10 +428,10 @@ class main(Deltacode):
         Pour effacer l'historique du programme
         """
         self.clear(effect='strike')
-        time.sleep(0.5)
+        sleep(0.5)
         self.history = "\nL'historique actuelle a été vidé"
         self.clear()
-        time.sleep(0.5)
+        sleep(0.5)
         self.history = "\n"
 
     def save_history(self):
@@ -449,12 +442,12 @@ class main(Deltacode):
         with open("historique.txt", "a", encoding='utf-8') as f:
             f.write(self.history)
         print_color("L'historique a été sauvegardé", effect="italic")
-        time.sleep(0.5)
+        sleep(0.5)
         self.clear()
 
     def del_save(self):
         self.clear(effect='strike', color='red')
-        time.sleep(0.5)
+        sleep(0.5)
         self.history = "\n"
         try:
             os.remove("historique.txt")
@@ -472,24 +465,37 @@ class main(Deltacode):
         except:
             print_color("Cette fonction n'est actuellement pas fonctionnel sur votre appareil", color="red",
                         effect="bold")
-            time.sleep(1.5)
+            sleep(1.5)
 
     def test(self):
-        Shift = 10
-        Password = "DELTA's TEAM BY DAISSEUR"
-        Text = "Je ne sais pas pourquoi le mot de passe est en anglais mais bon. Alors ça marche ?"
-        self.status = "encode"
-        encoding = DayEncoding(password=Password, string=Text, shift=Shift, debug=True).encode()
-        print_color(encoding, color='blue')
-        self.add_history(Password, Text, encoding, decode_encode="encode", shift=str(Shift))
-        self.status = "decode"
-        decoding = DayEncoding(Password, encoding, Shift, hexa=True, debug=True, error_input=True).decode()
-        print_color(decoding, color='blue')
-        self.add_history(Password, encoding, decoding, decode_encode="decode", shift=str(Shift))
+        choice_code = input(self.create_menu(2, list(self.encodings.keys())))
+
+        for encoding in self.class_encodings:
+            name = encoding.__name__
+            index = str(self.class_encodings.index(encoding) + 1)
+            print(index)
+            if choice_code == index:
+                Shift = 10
+                Password = "DELTA's TEAM BY DAISSEUR"
+                Text = "Je ne sais pas pourquoi le mot de passe est en anglais mais bon. Alors ça marche ?"
+                self.status = "encode"
+                encoding_ = encoding(password=Password, string=Text, shift=Shift, debug=True).encode().string
+                print_color(encoding_, color='blue')
+                self.add_history(Password, Text, encoding_, decode_encode="encode", shift=str(Shift))
+                self.status = "decode"
+                decoding_ = encoding(Password, encoding_, Shift, hexa=True, debug=True, error_input=True).decode().string
+                print_color(decoding_, color='blue')
+                self.add_history(Password, encoding_, decoding_, decode_encode="decode", shift=str(Shift))
+
+                break
+            elif choice_code == "4":
+                print("Développement en cours...")
+        if choice_code not in [str(i) for i in range(1, len(self.class_encodings) + 1)]:
+            print_color('Invalid choice', color='red', effect='bold')
 
     def run(self):
         while True:
-            self.banner = ' \\\ DELTA // '
+            self.banner = ' \\\ DELTACODE // '
             self.clear()
             choice = input(self.create_menu(2, ["Encoder",
                                                 "Décoder",
@@ -522,8 +528,8 @@ class main(Deltacode):
                 self.restart()
             elif choice == "9":
                 self.test()
-            time.sleep(0.5)
+            sleep(0.5)
 
 
 if __name__ == '__main__' or "debug" in sys.argv:
-    main(rotation, ceasar, DD, copy=True).run()
+    main(Cesar, ROT, DayEncoding, copy=True).run()

@@ -1,6 +1,6 @@
 # TEAM DELTA / DELTA's TEAM
 # By daisseur, discord : daisseur#7755
-import codecs
+
 import os
 import string as s
 import time
@@ -320,7 +320,7 @@ class Deltacode:
         self.valid_char = s.printable
         self.status = "in __init__"
         self.center_y = int(chercher(str(shutil.get_terminal_size()), "columns=", ",").replace("columns=", '').replace(",", ''))
-        self.banner = ' \\\ DELTA // '
+        self.banner = ' \\\ DELTACODE // '
         self.password_running = "None"
         self.text_running = "None"
         self.shift_running = 0

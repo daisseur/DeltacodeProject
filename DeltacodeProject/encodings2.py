@@ -5,16 +5,18 @@
 import string as s
 import time
 import types
+from DeltacodeProject.scripts import *
 
-from scripts import *
 
 class Error(Exception):
     def __init__(self, message):
         self.message = message
 
+
 class Run_Error(Exception):
     def __init__(self, message):
         self.message = message
+
 
 class Cesar:
     def __init__(self, rot, string=''):
@@ -209,6 +211,7 @@ class ROT_OLD:
             except:
                 self.error(f"[ERROR string:'{'non'}', password:'{self.password[i % len(self.password)]}']", fatal_error=f"[FATAL ERROR: '{char}']")
         return ROT_OLD(password=self.password, string=self.result)
+
 
 class DayEncoding:
     def __init__(self, password: str, string='', shift=0, hexa=True, debug=False, error_input=False):
