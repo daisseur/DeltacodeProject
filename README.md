@@ -1,3 +1,4 @@
+![DELTACODE](https://github.com/daisseur/Deltacode_project/raw/main/Deltacode.ico)
 # DELTACODE PROJECT
 Bienvenue sur mon projet !
 
