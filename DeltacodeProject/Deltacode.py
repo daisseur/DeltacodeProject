@@ -472,9 +472,11 @@ class Deltacode:
         self.password_running = Password
         return input_return()
 
-    def create_menu(self, tab: int, lst: list):
-        menu_tab = "\t" * tab + "│"
-        end = "│"
+    def create_menu(self, tab: int, lst: list, encadr="│", centery: int = None):
+        if not centery:
+            centery = self.center_y
+        menu_tab = "\t" * tab + encadr
+        end = encadr
         menu = """"""
         len_max = 0
         number = 0
@@ -484,12 +486,12 @@ class Deltacode:
                 len_max = len(i) + 4
         calcul = tab*6 + 2*len(end) + len_max + len(str(len(lst))) + 3
         # print(calcul)
-        if calcul > self.center_y or (calcul + tab*6) > self.center_y:
-            menu_tab = (self.center_y - calcul) * " " + end
+        if calcul > centery or (calcul + tab*6) > centery:
+            menu_tab = (centery - calcul) * " " + end
             new_calcul = len(menu_tab) + 2*len(end) + len_max + len(str(len(lst))) + 3
-            if new_calcul > self.center_y:
+            if new_calcul > centery:
                 menu_tab = end
-            if new_calcul - 2*len(end) > self.center_y:
+            if new_calcul - 2*len(end) > centery:
                 end = ''
                 menu_tab = ''
             # print("RESPONSIVE", self.center_y, "\n" + "-" * self.center_y, calcul)
