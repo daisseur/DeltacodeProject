@@ -475,6 +475,7 @@ class Deltacode:
     def create_menu(self, tab: int, lst: list, encadr="│", centery: int = None):
         if not centery:
             centery = self.center_y
+        print(centery)
         menu_tab = "\t" * tab + encadr
         end = encadr
         menu = """"""

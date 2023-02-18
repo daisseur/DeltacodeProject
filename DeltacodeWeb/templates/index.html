@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+    <title>DeltacodeProject</title>
+</head>
+<body>
+    <div class="banner">
+        <h3>Bienvenue sur la page du</h3>
+        <h1>DeltacodeProject</h1>
+    </div>
+    <div class="btn-banner">
+        <select name="ENCODE / DECODE" id="encode/decode">
+            <option>Encode</option>
+            <option>Decode</option>
+        </select>
+        <select name="Encoding" id="encoding">
+            <optgroup><option>DayEncoding</option></optgroup>
+
+        </select>
+        <button id="done">here</button><button id="done">here</button><button id="done">here</button><button id="done">here</button><button id="done">here</button><button id="done">here</button><button id="done">here</button>
+    </div>
+    <p id="result">result</p>
+    <script src="{{url_for('static', filename='index.js')}}"></script>
+</body>
+</html>

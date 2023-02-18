@@ -33,6 +33,7 @@ def decode(string, password="Mon mot de passe hard !!!"):
     return result.decode('UTF-8')
 
 
+
 enc = encode()
 print(enc)
 print("".center(100, "="))

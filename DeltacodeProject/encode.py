@@ -30,7 +30,8 @@ for arg in sys.argv[1:]:
     if "rep=" in arg:
         rep = arg[len("rep="):]
         for file in os.listdir(rep):
-            files.append(rep + file)
+            ex = "/" if os.name == "posix" else "\\"
+            files.append(rep + ex if rep[-1] != ex else '' +  file)
 
     if arg.lower() == "valid=false":
         validation = False

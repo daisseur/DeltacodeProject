@@ -1,4 +1,6 @@
-from DeltacodeProject.DeltacodeProject import Deltacode, DayEncoding
+from DeltacodeProject.encodings2 import *
+from DeltacodeProject.Deltacode import Deltacode
+
 import tkinter as tk
 from tkinter import StringVar, Entry, Label, Button, Tk, Frame, Listbox
 from clipboard import copy

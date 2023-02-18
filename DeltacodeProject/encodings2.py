@@ -17,7 +17,6 @@ class Run_Error(Exception):
     def __init__(self, message):
         self.message = message
 
-
 class Cesar:
     def __init__(self, rot, string=''):
         self.result = ''
@@ -216,6 +215,7 @@ class ROT_OLD:
 class DayEncoding:
     def __init__(self, password: str, string='', shift=0, hexa=True, debug=False, error_input=False):
         self.result = ''
+        self.int_result = ''
         self.password_len = len(password)
         self.string = ''.join(str(i) for i in string) if isinstance(string, str) else string
         self.password = password
@@ -241,9 +241,21 @@ class DayEncoding:
     def __str__(self):
         return ''.join(str(i) for i in self.string)
 
+    def __int__(self):
+        result_int = ''
+        if self.hexa:
+            try:
+                result_int = ''.join(str(ord(hex(i))) for i in self.to_hexa(self.string, []))
+            except:
+                for l in self.string:
+                    result_int += str(ord(l))
+        else:
+            for l in self.string:
+                result_int += str(ord(l))
+        return int(result_int)
+
     def __repr__(self):
         return ''.join(str(i) for i in self.string)
-
 
     def verif(self, shift, string, password):
         if string and not isinstance(string, types.UnionType):
@@ -316,17 +328,26 @@ class DayEncoding:
                     if self.hexa:
                         self.debug("hexa")
                         self.result = tuple(self.result)
-                        encoding = hex((ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111)
+                        calc = (ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111
+                        self.int_result += str(calc)
+                        encoding = hex(calc)
                         self.debug(f"'{car}' / {hex(ord(car))} == '{chr((ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111)}' / {encoding}")
                     else:
                         self.debug("normal")
-                        encoding = chr((ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111)
+                        calc = (ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111
+                        self.int_result += str(calc)
+                        encoding = chr(calc)
                         self.debug(encoding)
 
                     self.result = self.add_instance(self.result, encoding)
                 except:
                     self.error(f"[ERROR string:'{car}', password:'{self.password[i % self.password_len]}']", fatal_error=f"[FATAL ERROR '{car}']")
         return self.return_(self.result)
+
+    def to_hexa(self, string, to_tuple):
+        for hexa in string[2:].split('0x'):
+            to_tuple.append('0x' + hexa)
+        return to_tuple
 
     def decode(self, string='', password='', shift=0):
         # Résultat en valeurs hexadecimales
@@ -339,8 +360,7 @@ class DayEncoding:
             self.debug("hexa")
             to_tuple = list()
             if isinstance(self.string, str):
-                for hexa in self.string[2:].split('0x'):
-                    to_tuple.append('0x' + hexa)
+                self.to_hexa(self.string, to_tuple)
             elif isinstance(self.string, tuple) or isinstance(self.string, list):
                 to_tuple = self.string
             try:
@@ -366,3 +386,84 @@ class DayEncoding:
                 except:
                     self.error(f"[ERROR, string:'{char}', password:'{self.password[i % self.password_len]}']", fatal_error=f"[FATAL ERROR '{char}']")
         return self.return_(self.result)
+
+class Custom:
+    def __init__(self, password: str, string='', custom=s.ascii_lowercase, error_input=False):
+        self.result = ''
+        self.password = password
+        self.string = string
+        self.custom = custom
+        self.error_input = error_input
+        self.warning = "/!\ S'il y a une lettre avec un accent dans le texte à encoder ou \
+                              dans le password, la lettre sera transformée pour qu'il n'y ait pas d'accent (à -> a)"
+
+    def __str__(self):
+        return self.string
+
+    def __repr__(self):
+        return self.string
+
+    def error(self, error, fatal_error="[FATAL ERROR]"):
+        try:
+            if self.error_input:
+                self.result += error
+            else:
+                print_color(error, color='red', effect='underline')
+        except:
+            if self.error_input:
+                self.result += fatal_error
+            else:
+                print_color(fatal_error, color='red', effect='underline', highlight='True')
+
+    def verif(self, string, password):
+        if string:
+            self.string = string
+        if not self.string:
+            raise Error("No string")
+        if password:
+            self.password = password
+        if not self.password:
+            self.result = self.string
+            return Custom(password=self.password, string=self.result, custom=self.custom)
+
+    def encode(self, string='', password=''):
+        self.result = ''
+        self.verif(string=string, password=password)
+        for i in range(len(self.string)):
+            char = self.string[i]
+            try:
+                if char not in self.custom:
+                    char = no_accent_char(char=char)
+                    if char not in self.custom:
+                        char = "?"
+                        self.result += char
+                    else:
+                        self.result += self.custom[
+                            (self.custom.index(char) + self.custom.index(self.password[i % len(self.password)])) % len(
+                                self.custom)]
+
+                else:
+                    self.result += self.custom[(self.custom.index(char) + self.custom.index(self.password[i % len(self.password)])) % len(self.custom)]
+            except:
+                self.error(f"[ERROR string:'{self.custom.index(char)}', password:'{self.password[i % len(self.password)]}']", fatal_error=f"[FATAL ERROR: '{char}']")
+        return Custom(password=self.password, string=self.result, custom=self.custom)
+
+    def decode(self, string='', password=''):
+        self.result = ''
+        self.verif(string=string, password=password)
+        for i in range(len(self.string)):
+            char = self.string[i]
+            try:
+                if char not in self.custom:
+                    char = no_accent_char(char=char)
+                    if char not in self.custom:
+                        self.result += char
+                    else:
+                        self.result += self.custom[
+                            (self.custom.index(char) - self.custom.index(self.password[i % len(self.password)])) % len(
+                                self.custom)]
+                else:
+                    self.result += self.custom[(self.custom.index(char) - self.custom.index(self.password[i % len(self.password)])) % len(self.custom)]
+            except:
+                self.error(f"[ERROR string:'{self.custom.index(char)}', password:'{self.password[i % len(self.password)]}']", fatal_error=f"[FATAL ERROR: '{char}']")
+        return Custom(password=self.password, string=self.result, custom=self.custom)

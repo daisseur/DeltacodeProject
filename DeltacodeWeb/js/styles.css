@@ -1,0 +1,67 @@
+:root {
+    --banner-margin: 60px;
+    --main-color: rgb(17, 119, 42);
+}
+
+body {
+    margin-top: 200px;
+    background: rgb(22, 22, 22);
+    color: rgb(206, 200, 200);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+div.banner {
+    background: linear-gradient(to bottom right, rgb(22, 22, 22), black, var(--main-color),var(--main-color), black, rgb(22, 22, 22) );
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: calc(100% - var(--banner-margin)*2 );
+    border-radius: 5px;
+    color: white;
+    margin-left: var(--banner-margin);
+    margin-right: var(--banner-margin);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+div.btn-banner {
+    top: 150px;
+    position: fixed;
+    width: calc(100% - var(--banner-margin)*2 );
+    text-align: center;
+
+}
+button {
+    text-transform: uppercase;
+    padding: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-image: radial-gradient(var(--main-color), var(--main-color), rgb(22, 22, 22));
+    border-radius: 8px;
+    width: 150px;
+    height: 35px;
+    color: white;
+    font-size: 25px;
+    transition: 200ms;
+    margin-right: 40px;
+}
+button:hover {
+    transform: translateX(+10px);
+    width: 170px;
+    margin-right: 20px;
+}
+button:active {
+    background-image: linear-gradient(var(--main-color), rgb(22, 22, 22), var(--main-color));
+}
+select {
+
+    border-radius: 5px;
+    font-size: 20px;
+    padding: 5px;
+    width: 200px;
+    height: 35px;
+    background-color: black;
+    color: var(--main-color);
+}
+select::selection {
+    background: purple;
+}
