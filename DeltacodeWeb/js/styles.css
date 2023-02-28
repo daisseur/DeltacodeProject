@@ -1,6 +1,11 @@
 :root {
     --banner-margin: 60px;
     --main-color: rgb(17, 119, 42);
+    --c-active: #275EFE;
+    --c-active-inner: #FFFFFF;
+    --c-default: #D2D6E9;
+    --c-default-dark: #C7CBDF;
+    --c-black: #1B1B22;
 }
 
 body {

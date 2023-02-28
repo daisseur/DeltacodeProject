@@ -13,27 +13,17 @@ function goIt(where) {
   window.location.assign(where);
 }
 
-async function coding(password, string, shift, encoding) {
+async function coding(password, string, shift, encoding, result) {
   var myInit = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ string: string, password: password, shift: shift }),
   };
-  var obj = await fetch(`http://192.168.1.7:5000/${encoding}/encode`, myInit)
-    .then((res) => {
-      return res.json();
-    })
-    .then((jsonResponse) => {
-      console.log(jsonResponse);
-      return jsonResponse;
-    })
-    .catch((err) => {
-      // handle error
-      console.error(err);
-      return err;
-    });
-  console.log("222", obj)
-  return await obj
+  const res = await fetch(`http://192.168.1.7:5000/${encoding}/encode`, myInit);
+  obj = await res.json();
+
+  console.log(obj);
+  result.innerText = obj["string"]
 }
 
 btn.addEventListener("click", () => {
@@ -49,8 +39,7 @@ btn.addEventListener("click", () => {
     password.value,
     string.value,
     parseInt(shift.value),
-    encoding.value
+    encoding.value,
+    result
   );
-  console.log(data);
-  result.innerText = data;
 });
