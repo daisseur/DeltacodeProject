@@ -203,4 +203,4 @@ def get_custom_decode():
 
     return jsonify(dict_res)
 
-app.run("192.168.1.7", 5000, debug=True)
+app.run("daisseur.gihtub.io", 5000, debug=True)
