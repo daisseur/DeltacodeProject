@@ -4,6 +4,7 @@ from markupsafe import escape
 from string import ascii_lowercase
 import inspect
 from DeltacodeProject.encodings2 import *
+import sys
 app = Flask(__name__, template_folder="templates", static_folder="js")
 
 def get_kwargs(class_):
@@ -202,5 +203,9 @@ def get_custom_decode():
             dict_res[k] = eval(f"res.{k}")
 
     return jsonify(dict_res)
-
-app.run("daisseur.gihtub.io", 5000, debug=True)
+ip = "localhost"
+for arg in sys.argv:
+    if "ip=" in arg:
+        ip = arg[3:]
+    
+app.run(ip, 5000, debug=True)
