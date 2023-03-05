@@ -203,9 +203,10 @@ def get_custom_decode():
             dict_res[k] = eval(f"res.{k}")
 
     return jsonify(dict_res)
-ip = "localhost"
+import socket
+hostname = socket.gethostname()
+ip = socket.gethostbyname(hostname)
 for arg in sys.argv:
     if "ip=" in arg:
         ip = arg[3:]
-    
 app.run(ip, 5000, debug=True)
