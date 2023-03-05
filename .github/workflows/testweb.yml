@@ -1,19 +1,15 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Web-Test
 
 
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+  
+  # Allows you to run this workflow manually from the Actions tab
+  
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -30,13 +26,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4.5.0
       
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: install packages
+        run: |
+          pip install flask
+          pip install DeltacodeProject
+          pip install unidecode
 
       # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Run web script
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
           python3 DeltacodeWeb/localweb.py
