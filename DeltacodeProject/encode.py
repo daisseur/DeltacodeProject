@@ -1,6 +1,7 @@
 import os
 import sys
 from getpass import getpass
+
 print(sys.argv)
 print(os.getcwd())
 try:
@@ -14,9 +15,14 @@ except Exception:
         raise Exception
 password = str()
 files = []
+hexa = True
 shift = str()
 validation = True
 for arg in sys.argv[1:]:
+    if "hexa=" in arg:
+        if arg[len("hexa="):].lower() in ["false", "no"]:
+            hexa = False
+
     if "password=" in arg:
         password = arg[len("password="):]
     if "file=" in arg:
@@ -31,7 +37,7 @@ for arg in sys.argv[1:]:
         rep = arg[len("rep="):]
         for file in os.listdir(rep):
             ex = "/" if os.name == "posix" else "\\"
-            files.append(rep + ex if rep[-1] != ex else '' +  file)
+            files.append(rep + ex if rep[-1] != ex else '' + file)
 
     if arg.lower() == "valid=false":
         validation = False
@@ -57,6 +63,7 @@ if len(str(shift)) == 0 or shift == "None":
         else:
             break
 
+
 def write_file(filename, data, byte=False):
     if isinstance(data, bytearray):
         open(filename, 'wb').write(data)
@@ -66,10 +73,12 @@ def write_file(filename, data, byte=False):
     else:
         open(filename, 'w').write(data)
 
+
 for file in files:
     print(file)
     if os.path.basename(__file__) == "encode.py":
-        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())), shift=shift).encode()
+        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())),
+                             shift=shift, hexa=hexa).encode()
         print(coding)
         if validation:
             validation = input("Êtes-vous sûr de transformer le fichier ? ")
@@ -77,7 +86,8 @@ for file in files:
                 exit(0)
         write_file(file, coding, byte=True)
     elif os.path.basename(__file__) == "decode.py":
-        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())), shift=shift).decode()
+        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())),
+                             shift=shift, hexa=hexa).decode()
         print(coding)
         if validation:
             validation = input("Êtes-vous sûr de transformer le fichier ? ")

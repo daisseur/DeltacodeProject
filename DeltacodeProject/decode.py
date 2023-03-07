@@ -14,9 +14,14 @@ except Exception:
         raise Exception
 password = str()
 files = []
+hexa = True
 shift = str()
 validation = True
 for arg in sys.argv[1:]:
+    if "hexa=" in arg:
+        if arg[len("hexa="):].lower() in ["false", "no"]:
+            hexa = False
+
     if "password=" in arg:
         password = arg[len("password="):]
     if "file=" in arg:
@@ -69,7 +74,7 @@ def write_file(filename, data, byte=False):
 for file in files:
     print(file)
     if os.path.basename(__file__) == "encode.py":
-        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())), shift=shift).encode()
+        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())), shift=shift, hexa=hexa).encode()
         print(coding)
         if validation:
             validation = input("Êtes-vous sûr de transformer le fichier ? ")
@@ -77,7 +82,7 @@ for file in files:
                 exit(0)
         write_file(file, coding, byte=True)
     elif os.path.basename(__file__) == "decode.py":
-        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())), shift=shift).decode()
+        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())), shift=shift, hexa=hexa).decode()
         print(coding)
         if validation:
             validation = input("Êtes-vous sûr de transformer le fichier ? ")
