@@ -82,6 +82,18 @@ class Deltacode:
     def curly(self, string: str):
         return '{' + string + '}'
 
+    def read_file(self, filename, byte=False):
+        return bytearray(open(filename, 'rb').read()) if byte else open(filename, 'r').read()
+
+    def write_file(self, filename, data, byte=False):
+        if byte and isinstance(data, bytearray):
+            open(filename, 'wb').write(data)
+        elif byte:
+            data = bytearray(ord(i) for i in data)
+            open(filename, 'wb').write(data)
+        else:
+            open(filename, 'w').write(data)
+
     def add_history(self, Password, Text, coding, decode_encode: str, shift="None"):
         if shift != "None":
             shift_insert = self.curly(f"Shift = {shift}") + "\n"

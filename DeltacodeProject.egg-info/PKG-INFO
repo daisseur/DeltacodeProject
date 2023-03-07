@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: DeltacodeProject
-Version: 0.7.30.1
+Version: 0.7.30.6
 Summary: Encoder et décoder du texte à l'aide de pluisieurs types d'encodages
 Home-page: https://github.com/daisseur/Deltacode_project
 Author: daisseur
@@ -27,7 +27,7 @@ License: MIT License
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         SOFTWARE.
         
-Keywords: python,deltacode,code,coding,encoding,DayEncoding,ROT,Cesar
+Keywords: python,deltacode,code,coding,encoding,DayEncoding,ROT,Cesar,DeltacodeProject,project,delta
 Classifier: Intended Audience :: Developers
 Classifier: Programming Language :: Python :: 3
 Classifier: Operating System :: Unix

@@ -56,24 +56,34 @@ if len(str(shift)) == 0 or shift == "None":
             continue
         else:
             break
+
+def write_file(filename, data, byte=False):
+    if isinstance(data, bytearray):
+        open(filename, 'wb').write(data)
+    elif byte:
+        data = bytearray(ord(i) for i in data)
+        open(filename, 'wb').write(data)
+    else:
+        open(filename, 'w').write(data)
+
 for file in files:
     print(file)
     if os.path.basename(__file__) == "encode.py":
-        coding = DayEncoding(password=password, string=open(file, 'r').read(), shift=shift).encode()
+        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())), shift=shift).encode()
         print(coding)
         if validation:
             validation = input("Êtes-vous sûr de transformer le fichier ? ")
             if not validation.lower() == "oui":
                 exit(0)
-        open(file, 'w').write(coding)
+        write_file(file, coding, byte=True)
     elif os.path.basename(__file__) == "decode.py":
-        coding = DayEncoding(password=password, string=open(file, 'r').read(), shift=shift).decode()
+        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())), shift=shift).decode()
         print(coding)
         if validation:
             validation = input("Êtes-vous sûr de transformer le fichier ? ")
             if not validation.lower() == "oui":
                 exit(0)
-        open(file, 'w').write(coding)
+        write_file(file, coding, byte=True)
     else:
         # Auto destruction
         password = 'hDaErLdTA password'
