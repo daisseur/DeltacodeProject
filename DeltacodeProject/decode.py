@@ -1,6 +1,7 @@
 import os
 import sys
 from getpass import getpass
+
 print(sys.argv)
 print(os.getcwd())
 try:
@@ -36,7 +37,7 @@ for arg in sys.argv[1:]:
         rep = arg[len("rep="):]
         for file in os.listdir(rep):
             ex = "/" if os.name == "posix" else "\\"
-            files.append(rep + ex if rep[-1] != ex else '' +  file)
+            files.append(rep + ex if rep[-1] != ex else '' + file)
 
     if arg.lower() == "valid=false":
         validation = False
@@ -62,19 +63,22 @@ if len(str(shift)) == 0 or shift == "None":
         else:
             break
 
+
 def write_file(filename, data, byte=False):
     if isinstance(data, bytearray):
         open(filename, 'wb').write(data)
     elif byte:
-        data = bytearray(ord(i) for i in data)
+        data = bytearray(ord(i) % 256 for i in data)
         open(filename, 'wb').write(data)
     else:
         open(filename, 'w').write(data)
 
+
 for file in files:
     print(file)
     if os.path.basename(__file__) == "encode.py":
-        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())), shift=shift, hexa=hexa).encode()
+        coding = DayEncoding(password=password, string=''.join(str(chr(i)) for i in bytearray(open(file, 'rb').read())),
+                             shift=shift, hexa=hexa, error_input=False).encode()
         print(coding)
         if validation:
             validation = input("Êtes-vous sûr de transformer le fichier ? ")
@@ -82,7 +86,8 @@ for file in files:
                 exit(0)
         write_file(file, coding, byte=True)
     elif os.path.basename(__file__) == "decode.py":
-        coding = DayEncoding(password=password, string=''.join(chr(i) for i in bytearray(open(file, 'rb').read())), shift=shift, hexa=hexa).decode()
+        coding = DayEncoding(password=password, string=''.join(str(chr(i)) for i in bytearray(open(file, 'rb').read())),
+                             shift=shift, hexa=hexa, error_input=False).decode()
         print(coding)
         if validation:
             validation = input("Êtes-vous sûr de transformer le fichier ? ")

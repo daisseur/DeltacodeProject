@@ -213,11 +213,13 @@ class ROT_OLD:
 
 
 class DayEncoding:
-    def __init__(self, password: str, string='', shift=0, hexa=True, debug=False, error_input=False):
+    def __init__(self, password: str, string='', byte_array=bytearray() ,shift=0, hexa=True, debug=False, error_input=False):
         self.result = ''
+        self.byte_result = bytearray()
         self.int_result = ''
         self.password_len = len(password)
-        self.string = ''.join(str(i) for i in string) if isinstance(string, str) else string
+        self.string = ''.join(str(i) for i in string) if isinstance(string, str) or isinstance(string, list) else string
+        self.byte_array = byte_array
         self.password = password
         self.shift = shift
         if hexa:
@@ -257,6 +259,11 @@ class DayEncoding:
     def __repr__(self):
         return ''.join(str(i) for i in self.string)
 
+    def return_(self, string):
+        string = ''.join(i for i in string)
+        return DayEncoding(password=self.password, string=''.join(i for i in string), shift=self.shift, hexa=self.hexa,
+                           debug=self.debug_var, error_input=self.error_input)
+
     def verif(self, shift, string, password):
         if string and not isinstance(string, types.UnionType):
             self.string = string
@@ -279,9 +286,28 @@ class DayEncoding:
             self.result = self.string
             return DayEncoding(password=self.password, string=self.result, shift=self.shift, hexa=self.hexa, debug=self.debug_var, error_input=self.error_input)
 
-    def return_(self, string):
-        string = ''.join(i for i in string)
-        return DayEncoding(password=self.password, string=''.join(i for i in string), shift=self.shift, hexa=self.hexa, debug=self.debug_var, error_input=self.error_input)
+    def verif_byte(self, shift, byte_array, password):
+        if byte_array and not isinstance(byte_array, types.UnionType):
+            self.byte_array = byte_array
+        if shift:
+            if not isinstance(shift, int):
+                try:
+                    self.shift = int(shift)
+                except:
+                    Error("ERREUR: le shift doit être un nombre entier /!\\", )
+                    return
+            if shift > 1114111:
+                Error("ERREUR: le shift ne doit pas dépasser 1114111")
+                return
+        if password:
+            self.password = password
+        if not self.byte_array or isinstance(self.byte_array, types.UnionType):
+            self.debug(repr(byte_array), repr(self.byte_array))
+            raise Error("No string")
+        if not self.password:
+            self.byte_result = byte_array
+            return DayEncoding(password=self.password, byte_array=self.byte_result, shift=self.shift, hexa=self.hexa,
+                               debug=self.debug_var, error_input=self.error_input)
 
     def add_instance(self, to_be_add, string: str):
         string = str(string)
@@ -316,6 +342,28 @@ class DayEncoding:
             print_color(*args, color='green', effect='bold')
             time.sleep(0.005)
 
+
+    def encode_byte(self, byte_array=bytearray(), password='', shift=0):
+        self.byte_result = bytearray()
+        verif = self.verif_byte(byte_array=byte_array, password=password, shift=shift)
+        if verif:
+            return verif
+        for i in range(len(self.byte_array)):
+            byte = self.byte_array[i]
+            try:
+                self.debug("normal")
+                calc = (byte + ord(self.password[i % self.password_len])) + self.shift % 1114111
+                self.int_result += str(calc)
+                encoding = calc
+                self.debug(encoding)
+
+                self.byte_result.append(encoding)
+            except:
+                self.error(f"[ERROR byte:'{byte}', password:'{self.password[i % self.password_len]}']",
+                           fatal_error=f"[FATAL ERROR '{byte}']")
+        return self.return_(self.result)
+
+
     def encode(self, string='', password='', shift=0):
         self.result = ''
         verif = self.verif(password=password, string=string, shift=shift)
@@ -348,6 +396,23 @@ class DayEncoding:
         for hexa in string[2:].split('0x'):
             to_tuple.append('0x' + hexa)
         return to_tuple
+
+    def decode_byte(self, byte_array=bytearray(), password='', shift=0):
+        # Résultat en valeurs hexadecimales
+        self.byte_result = bytearray()
+        verif = self.verif_byte(byte_array=byte_array, password=password, shift=shift)
+        if verif:
+            return verif
+        self.debug(f"bytes = {self.byte_array}")
+        for i in range(len(self.byte_array)):
+            byte = self.byte_array[i]
+            try:
+                coding = ((byte - ord(self.password[i % self.password_len])) - self.shift) % 1114111
+                self.byte_array.append(coding)
+                self.debug(coding)
+            except:
+                self.error(f"[ERROR, bytes:'{byte}', password:'{self.password[i % self.password_len]}']", fatal_error=f"[FATAL ERROR '{byte}']")
+        return self.return_(self.result)
 
     def decode(self, string='', password='', shift=0):
         # Résultat en valeurs hexadecimales
