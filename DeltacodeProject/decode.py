@@ -5,15 +5,18 @@ from getpass import getpass
 print(sys.argv)
 print(os.getcwd())
 try:
-    from DeltacodeProject.encodings import DayEncoding
+    from DeltacodeProject.encodings2 import DayEncoding
+    from DeltacodeProject.scripts import bytes_ext
 except Exception:
     os.system("py -m pip install --upgrade DeltacodeProject")
     os.system("pip install --upgrade DeltacodeProject")
     try:
-        from DeltacodeProject.encodings import DayEncoding
+        from DeltacodeProject.encodings2 import DayEncoding
+        from DeltacodeProject.scripts import bytes_ext
     except:
         raise Exception
 password = str()
+print_value = True
 files = []
 hexa = True
 shift = str()
@@ -38,7 +41,12 @@ for arg in sys.argv[1:]:
         for file in os.listdir(rep):
             ex = "/" if os.name == "posix" else "\\"
             files.append(rep + ex if rep[-1] != ex else '' + file)
-
+    if "print=" in arg:
+        print_value = arg[len("print="):]
+        if print_value.lower() in ["false", "no"]:
+            print_value = False
+        else:
+            print_value = True
     if arg.lower() == "valid=false":
         validation = False
 
@@ -74,30 +82,50 @@ def write_file(filename, data, byte=False):
         open(filename, 'w').write(data)
 
 
+def get_file_ex(filename):
+    ext = filename[filename.index("."):]
+    return ext
+
+def validation():
+    global validation
+    if validation:
+        validation = input("Êtes-vous sûr de transformer le fichier ? ")
+        if not validation.lower() == "oui":
+            exit(0)
+    return True
+
 for file in files:
     print(file)
     if os.path.basename(__file__) == "encode.py":
-        coding = DayEncoding(password=password, string=''.join(str(chr(i)) for i in bytearray(open(file, 'rb').read())),
-                             shift=shift, hexa=hexa, error_input=False).encode()
-        print(coding)
-        if validation:
-            validation = input("Êtes-vous sûr de transformer le fichier ? ")
-            if not validation.lower() == "oui":
-                exit(0)
-        write_file(file, coding, byte=True)
+        if get_file_ex(file).lower() in bytes_ext:
+            coding = DayEncoding(password=password, shift=shift, hexa=False, error_input=False)
+            coding = coding.encode_byte(bytearray(open(file, 'rb').read())).byte_array
+            if validation():
+                open(file, 'wb').write(coding)
+        else:
+            coding = DayEncoding(password=password,
+                                 shift=shift, hexa=hexa, error_input=False).encode(open(file, 'r').read()).string
+            if validation():
+                open(file, 'w').write(coding)
+        if print_value:
+            print(coding)
     elif os.path.basename(__file__) == "decode.py":
-        coding = DayEncoding(password=password, string=''.join(str(chr(i)) for i in bytearray(open(file, 'rb').read())),
-                             shift=shift, hexa=hexa, error_input=False).decode()
-        print(coding)
-        if validation:
-            validation = input("Êtes-vous sûr de transformer le fichier ? ")
-            if not validation.lower() == "oui":
-                exit(0)
-        write_file(file, coding, byte=True)
+        if get_file_ex(file).lower() in bytes_ext:
+            coding = DayEncoding(password=password, shift=shift, hexa=False, error_input=False)
+            coding = coding.decode_byte(bytearray(open(file, 'rb').read())).byte_array
+            if validation():
+                open(file, 'wb').write(coding)
+        else:
+            coding = DayEncoding(password=password,
+                                 shift=shift, hexa=hexa, error_input=False).decode(open(file, 'r').read()).string
+            if validation():
+                open(file, 'w').write(coding)
+        if print_value:
+            print(coding)
     else:
         # Auto destruction
         password = 'hDaErLdTA password'
         filename = __file__
         shift = 0
         text = open(filename, 'r').read()
-        open(filename, 'w').write(DayEncoding(password=password, string=text, shift=shift).encode())
+        open(filename, 'w').write(DayEncoding(password=password, shift=shift).encode(text))

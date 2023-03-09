@@ -259,10 +259,15 @@ class DayEncoding:
     def __repr__(self):
         return ''.join(str(i) for i in self.string)
 
-    def return_(self, string):
-        string = ''.join(i for i in string)
-        return DayEncoding(password=self.password, string=''.join(i for i in string), shift=self.shift, hexa=self.hexa,
-                           debug=self.debug_var, error_input=self.error_input)
+    def return_(self, result):
+        if isinstance(result, str) or isinstance(result, list) or isinstance(result, tuple):
+            string = ''.join(result)
+            return DayEncoding(password=self.password, string=''.join(string), shift=self.shift, hexa=self.hexa,
+                               debug=self.debug_var, error_input=self.error_input)
+        elif isinstance(result, bytearray):
+            return DayEncoding(password=self.password, byte_array=result, shift=self.shift,
+                               hexa=self.hexa,
+                               debug=self.debug_var, error_input=self.error_input)
 
     def verif(self, shift, string, password):
         if string and not isinstance(string, types.UnionType):
@@ -303,7 +308,7 @@ class DayEncoding:
             self.password = password
         if not self.byte_array or isinstance(self.byte_array, types.UnionType):
             self.debug(repr(byte_array), repr(self.byte_array))
-            raise Error("No string")
+            raise Error("No bytearray")
         if not self.password:
             self.byte_result = byte_array
             return DayEncoding(password=self.password, byte_array=self.byte_result, shift=self.shift, hexa=self.hexa,
@@ -352,7 +357,7 @@ class DayEncoding:
             byte = self.byte_array[i]
             try:
                 self.debug("normal")
-                calc = (byte + ord(self.password[i % self.password_len])) + self.shift % 1114111
+                calc = ((byte + ord(self.password[i % self.password_len])) + self.shift) % 256
                 self.int_result += str(calc)
                 encoding = calc
                 self.debug(encoding)
@@ -361,7 +366,7 @@ class DayEncoding:
             except:
                 self.error(f"[ERROR byte:'{byte}', password:'{self.password[i % self.password_len]}']",
                            fatal_error=f"[FATAL ERROR '{byte}']")
-        return self.return_(self.result)
+        return self.return_(self.byte_result)
 
 
     def encode(self, string='', password='', shift=0):
@@ -369,27 +374,25 @@ class DayEncoding:
         verif = self.verif(password=password, string=string, shift=shift)
         if verif:
             return verif
-        for i in range(len(str(self.string))):
+        for i in range(len(self.string)):
             char = self.string[i]
             for car in char:
                 try:
                     if self.hexa:
                         self.debug("hexa")
                         self.result = tuple(self.result)
-                        calc = (ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111
-                        self.int_result += str(calc)
-                        encoding = hex(calc)
-                        self.debug(f"'{car}' / {hex(ord(car))} == '{chr((ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111)}' / {encoding}")
+                        encoding = hex((ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111)
+                        self.debug(
+                            f"'{car}' / {hex(ord(car))} == '{chr((ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111)}' / {encoding}")
                     else:
                         self.debug("normal")
-                        calc = (ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111
-                        self.int_result += str(calc)
-                        encoding = chr(calc)
+                        encoding = chr((ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111)
                         self.debug(encoding)
 
                     self.result = self.add_instance(self.result, encoding)
                 except:
-                    self.error(f"[ERROR string:'{car}', password:'{self.password[i % self.password_len]}']", fatal_error=f"[FATAL ERROR '{car}']")
+                    self.error(f"[ERROR string:'{car}', password:'{self.password[i % self.password_len]}']",
+                               fatal_error=f"[FATAL ERROR '{car}']")
         return self.return_(self.result)
 
     def to_hexa(self, string, to_tuple):
@@ -398,7 +401,6 @@ class DayEncoding:
         return to_tuple
 
     def decode_byte(self, byte_array=bytearray(), password='', shift=0):
-        # Résultat en valeurs hexadecimales
         self.byte_result = bytearray()
         verif = self.verif_byte(byte_array=byte_array, password=password, shift=shift)
         if verif:
@@ -407,12 +409,12 @@ class DayEncoding:
         for i in range(len(self.byte_array)):
             byte = self.byte_array[i]
             try:
-                coding = ((byte - ord(self.password[i % self.password_len])) - self.shift) % 1114111
-                self.byte_array.append(coding)
+                coding = ((byte - ord(self.password[i % self.password_len])) - self.shift) % 256
+                self.byte_result.append(coding)
                 self.debug(coding)
             except:
                 self.error(f"[ERROR, bytes:'{byte}', password:'{self.password[i % self.password_len]}']", fatal_error=f"[FATAL ERROR '{byte}']")
-        return self.return_(self.result)
+        return self.return_(self.byte_result)
 
     def decode(self, string='', password='', shift=0):
         # Résultat en valeurs hexadecimales
