@@ -4,10 +4,12 @@
 import os
 import sys
 import shutil
-from DeltacodeProject.scripts import *
 from DeltacodeProject.encodings2 import *
+from DeltacodeProject import __version__
+from DeltacodeProject import *
 from time import sleep
 import string as s
+
 
 
 class Deltacode:
@@ -42,13 +44,15 @@ class Deltacode:
         self.status = "in __init__"
         self.center_y = int(
             chercher(str(shutil.get_terminal_size()), "columns=", ",", replace=True))
-        self.banner = ' \\\ DELTACODE // '
+        self.banner = f' \\\ DELTACODE // '
         self.password_running = None
         self.text_running = None
         self.shift_running = 0
         self.coding_running = None
+        self.filename = ''
+        self.hexa = True
         if os.path.exists("historique.txt"):
-            with open("historique.txt", 'r') as f:
+            with open("historique.txt", 'r', encoding='UTF-8') as f:
                 self.history = f.read()
         else:
             self.history = "\n"
@@ -61,14 +65,15 @@ class Deltacode:
         globals()[name] = type("name", (class_,), {})
 
     def copy(self, txt):
-        if self.use_copy is True:
-            if os.name == "posix":
-                os.system(f"echo '{str(txt)}' | xclip")
+        if txt not in ["None", None, False, True, '']:
+            if self.use_copy is True:
+                if os.name == "posix":
+                    os.system(f"echo '{str(txt)}' | xclip")
+                else:
+                    from clipboard import copy
+                    copy(txt)
             else:
-                from clipboard import copy
-                copy(txt)
-        else:
-            return
+                return
 
     def clear(self, effect='italic', color='blue'):
         if self.OS == "LINUX":
@@ -99,78 +104,125 @@ class Deltacode:
             shift_insert = self.curly(f"Shift = {shift}") + "\n"
         else:
             shift_insert = ''
+        if isinstance(Text, bytearray):
+            Text = f"Old bytes of {self.filename}"
+            coding = f"New bytes of {self.filename}"
 
         if decode_encode == "encode":
             self.history += f"== ENCODE - {self.coding_running} ==\n{shift_insert}{self.curly(f'Password = {Password}')}\n{self.curly(f'Texte = {Text}')}\n|--> {coding}\n"
         elif decode_encode == "decode":
             self.history += f"== DECODE - {self.coding_running} ==\n{shift_insert}{self.curly(f'Password = {Password}')}\n{self.curly(f'Texte = {Text}')}\n|--> {coding}\n"
 
-    def input_coding(self, coding_function, decode_encode: str, shift=False, password=True, warning="None",
-                     from_file=False, hexa=False):
+    def byte_or_text(self, filename):
+        if get_file_ex(filename) in bytes_ext:
+            return bytearray(open(filename, 'rb').read())
+        else:
+            return open(filename, 'r').read()
 
-        def ifhexa(opt):
+
+    def input_coding(self, coding_class, decode_encode: str, shift=False, password=True, warning="None",
+                     from_file=False, hexa=False):
+        self.status = decode_encode
+        byte = False
+        self.clear()
+        self.hexa = input("Voulez-vous utiliser l'encodage hexadecimal ? ")
+        if self.hexa.lower() in ["o", "y", "yes", "oui"]:
+            self.hexa = True
+        else:
+            self.hexa = False
+
+        def ifif(opt):
             if hexa:
-                opt.hexa = hexa
-                return opt
+                opt.hexa = self.hexa
+            if byte:
+                opt.byte_array = coding.byte_array
+                opt.string = coding.string
+            return opt
+
+        def coding_option():
+            print(hexa)
+            kwargs = {}
+            if hexa:
+                kwargs["hexa"] = self.hexa
+            if shift:
+                kwargs["shift"] = Shift
+            if Password:
+                kwargs["password"] = Password
             else:
-                return opt
+                kwargs["rot"] = Password
+            # print(byte, isinstance(Text, bytearray))
+            if byte:
+                if self.status == "encode":
+                    coding = coding_class(**kwargs).encode_byte(Text)
+                else:
+                    coding = coding_class(**kwargs).decode_byte(Text)
+                self.add_history(Password, Text, coding.byte_array, decode_encode, shift=str(Shift))
+            else:
+                kwargs["string"] = Text
+                if self.status == "encode":
+                    coding = coding_class(**kwargs).encode()
+                else:
+                    coding = coding_class(**kwargs).decode()
+                self.add_history(Password, Text, coding.string, decode_encode, shift=str(Shift))
+            return coding
 
         def input_return():
             if shift:
                 if from_file:
-                    return [Text, ifhexa(coding_function(password=Password, string=coding.string, shift=Shift)), filename]
-                return [Text, ifhexa(coding_function(password=Password, string=coding.string, shift=Shift))]
+                    return [Text, ifif(coding_class(password=Password, string=coding.string, shift=Shift)), self.filename]
+                return [Text, ifif(coding_class(password=Password, string=coding.string, shift=Shift))]
             elif password is False:
                 if from_file:
-                    return [Text, ifhexa(coding_function(rot=Password, string=coding.string, shift=Shift)), filename]
-                return [Text, ifhexa(coding_function(rot=Password, string=coding.string, shift=Shift))]
+                    return [Text, ifif(coding_class(rot=Password, string=coding.string, shift=Shift)), self.filename]
+                return [Text, ifif(coding_class(rot=Password, string=coding.string, shift=Shift))]
             else:
                 if from_file:
-                    return [Text, ifhexa(coding_function(password=Password, string=coding.string)), filename]
-                return [Text, ifhexa(coding_function(password=Password, string=coding.string))]
+                    return [Text, ifif(coding_class(password=Password, string=coding.string)), self.filename]
+                return [Text, ifif(coding_class(password=Password, string=coding.string))]
 
-        self.clear()
-        if warning is not None:
-            print_color(warning, color='yellow', effect='underline')
-        self.copy(str(self.password_running))
-        if hexa:
-            hexa = input("Voulez-vous utiliser l'encodage hexadecimal ? ")
-            if hexa.lower() == "oui":
-                hexa = True
-            else:
-                hexa = False
-        if password:
-            Password = input('Mot de passe : ')
-        else:
-            Password = input("Nombre de rotation à effectuer : ")
+        def get_rot():
             while True:
-                Password = input("Nombre de rotation à effectuer : ")
+                rot = input("Nombre de rotation à effectuer : ")
                 try:
-                    int(Password)
+                    int(rot)
                 except:
                     pass
                 else:
                     break
-        self.copy(str(self.text_running))
+            return rot
+
+        if warning is not None:
+            print_color(warning, color='yellow', effect='underline')
+        self.copy(str(self.password_running))
+        if password:
+            Password = input('Mot de passe : ')
+        else:
+            Password = get_rot()
         if from_file:
             while True:
-                filename = input('Nom du fichier : ')
-                if os.path.exists(filename):
-                    Text = open(filename, 'r', encoding='UTF-8').read()
+                self.copy(self.filename)
+                self.filename = input('Nom du fichier : ')
+                if os.path.exists(self.filename):
+                    Text = self.byte_or_text(self.filename)
                     break
         else:
             file = input(f"Voulez-vous {decode_encode}r à partir d'un fichier ? ")
             if file.lower() == "oui":
                 from_file = True
                 while True:
-                    filename = input('Nom du fichier : ')
-                    if os.path.exists(filename):
-                        with open(filename, 'r', encoding='UTF-8') as f:
-                            Text = f.read()
+                    self.copy(self.filename)
+                    self.filename = input('Nom du fichier : ')
+                    if os.path.exists(self.filename):
+                        Text = self.byte_or_text(self.filename)
                         break
+                return Text
             else:
+                self.copy(str(self.text_running))
                 from_file = False
                 Text = input('Texte : ')
+                self.text_running = Text
+        if from_file:
+            byte = True if isinstance(Text, bytearray) else False
         if shift:
             Shift = input("Utiliser le shift ? ")
             if Shift.lower() == "oui":
@@ -183,32 +235,20 @@ class Deltacode:
                         print_color("/!\ Veuillez rentrer un nombre", color="red", effect="bold")
                     else:
                         break
-                if self.status == 'encode':
-                    coding = coding_function(Password, Text, Shift, hexa=hexa).encode()
-                else:
-                    coding = coding_function(Password, Text, Shift, hexa=hexa).decode()
+                coding = coding_option()
                 print_color(coding.string, color='blue')
-                self.add_history(Password, Text, coding.string, decode_encode, shift=str(Shift))
                 self.text_running = coding.string
                 self.password_running = Password
                 self.shift_running = Shift
                 return input_return()
             else:
                 Shift = 0
-                if self.status == 'encode':
-                    coding = coding_function(Password, Text, Shift, hexa=hexa).encode()
-                else:
-                    coding = coding_function(Password, Text, Shift, hexa=hexa).decode()
-                self.add_history(Password, Text, coding.string, decode_encode, shift=str(Shift))
+                coding = coding_option()
                 self.shift_running = Shift
                 return input_return()
         else:
-            if decode_encode == "encode":
-                coding = coding_function(Password, Text).encode()
-            else:
-                coding = coding_function(Password, Text).decode()
+            coding = coding_option()
             print_color(coding.string, color='blue')
-            self.add_history(Password, Text, coding.string, decode_encode)
         self.text_running = coding.string
         self.password_running = Password
         return input_return()
@@ -219,7 +259,6 @@ class Deltacode:
         menu = """"""
         len_max = 0
         number = 0
-        before = 4
         for i in lst:
             if len(i) > len_max:
                 len_max = len(i) + 4
@@ -288,19 +327,19 @@ class main(Deltacode):
         for encoding in self.class_encodings:
             name = encoding.__name__
             index = str(self.class_encodings.index(encoding) + 1)
-            print(index)
+            # print(index)
             if choice_encode == index:
                 self.coding_running = name
-                print(self.coding_running)
-                print(self.encodings[name]["__init__"])
+                # print(self.coding_running)
+                # print(self.encodings[name]["__init__"])
                 password = True if "password" in self.encodings[name]["__init__"] else False
                 shift = True if "shift" in self.encodings[name]["__init__"] else False
                 hexa = True if "hexa" in self.encodings[name]["__init__"] else False
                 warning = encoding.warning if "warning" in self.encodings[name]["__init__"] else None
-                print("password", password)
-                print("shift", shift)
-                print("hexa", hexa)
-                print("warning", warning)
+                # print("password", password)
+                # print("shift", shift)
+                # print("hexa", hexa)
+                # print("warning", warning)
                 self.input_coding(encoding, decode_encode=self.status, password=password, shift=shift, hexa=hexa, warning=warning)
                 break
             elif choice_encode == "4":
@@ -322,19 +361,20 @@ class main(Deltacode):
         for encoding in self.class_encodings:
             name = encoding.__name__
             index = str(self.class_encodings.index(encoding) + 1)
-            print(index)
+            # print(index)
             if choice_decode == index:
                 self.coding_running = name
-                print(self.coding_running)
-                print(self.encodings[name]["__init__"])
+                # print(self.coding_running)
+                # print(self.encodings[name]["__init__"])
                 password = True if "password" in self.encodings[name]["__init__"] else False
                 shift = True if "shift" in self.encodings[name]["__init__"] else False
                 hexa = True if "hexa" in self.encodings[name]["__init__"] else False
-                warning = encoding.warning if "hexa" in self.encodings[name]["__init__"] else None
-                print("password", password)
-                print("shift", shift)
-                print("hexa", hexa)
-                print("warning", warning)
+
+                warning = encoding.warning if "warning" in self.encodings[name]["__init__"] else None
+                # print("password", password)
+                # print("shift", shift)
+                # print("hexa", hexa)
+                # print("warning", warning)
                 self.input_coding(encoding, decode_encode=self.status, password=password, shift=shift, hexa=hexa,
                                   warning=warning)
                 break
@@ -358,44 +398,59 @@ class main(Deltacode):
         for encoding in self.class_encodings:
             name = encoding.__name__
             index = str(self.class_encodings.index(encoding) + 1)
-            print(index)
+            # print(index)
             if choice_code == index:
                 self.coding_running = name
-                print(self.coding_running)
-                print(self.encodings[name]["__init__"])
+                # print(self.coding_running)
+                # print(self.encodings[name]["__init__"])
                 password = True if "password" in self.encodings[name]["__init__"] else False
-                print("password", password)
+                # print("password", password)
                 shift = True if "shift" in self.encodings[name]["__init__"] else False
-                print("shift", shift)
+                # print("shift", shift)
                 hexa = True if "hexa" in self.encodings[name]["__init__"] else False
-                print("hexa", hexa)
+                # print("hexa", hexa)
+                byte = True if "byte_array" in self.encodings[name]["__init__"] else False
+                # print("byte", byte)
                 warning = encoding.warning if "warning" in self.encodings[name]["__init__"] else None
-                print("warning", warning)
+                # print("warning", warning)
                 self.status = "encode"
                 info = self.input_coding(encoding, decode_encode=self.status, password=password, shift=shift, hexa=hexa,
                                   warning=warning).copy()
                 self.status = "decode"
+                if byte:
+                    if info[1].byte_array:
+                        coding = info[1].decode_byte()
+                        print_color(coding, color="blue")
+                        self.add_history(Password=info[1].password, Text=info[1], coding=coding.byte_array,
+                                         decode_encode=self.status, shift=coding.shift if shift else "None")
+                        break
                 coding = info[1].decode()
                 print_color(coding, color="blue")
                 self.add_history(Password=info[1].password, Text=info[1], coding=coding.string, decode_encode=self.status, shift=coding.shift if shift else "None")
                 break
             elif choice_code == "4":
                 print("Développement en cours...")
+                continue
         if choice_code not in [str(i) for i in range(1, len(self.class_encodings) + 1)]:
             print_color('Invalid choice', color='red', effect='bold')
 
     def encode_decode_file(self, return_choice=False):
         self.clear()
 
-        def replace_file(filename: str, update: str):
-            with open(filename, 'w') as file:
-                update = str(update)
-                file.write(update)
+        def replace_file(filename: str, update):
+            if isinstance(update, str):
+                open(filename, 'w').write(update)
+            elif isinstance(update, bytearray):
+                open(filename, 'wb').write(update)
+            else:
+                print(type(update))
+                raise Exception
 
         while True:
-            encode_decode = input("Encoder ou decoder votre fichier ? ")
-            if encode_decode.lower() == "encoder" or encode_decode.lower() == "decoder":
-                encode_decode = encode_decode[:-1]
+            ed = ["Encoder" + 20*" ", "Decoder"]
+            encode_decode = input("Encoder ou decoder votre fichier ?\n" + self.create_menu(0, ed))
+            if int(encode_decode) in [1, 2]:
+                encode_decode = ed[int(encode_decode)-1][:6].lower()
                 self.banner += f"- {encode_decode.upper()}"
                 self.clear()
                 self.status = encode_decode
@@ -405,34 +460,40 @@ class main(Deltacode):
                 for encoding in self.class_encodings:
                     name = encoding.__name__
                     index = str(self.class_encodings.index(encoding) + 1)
-                    print(index)
+                    # print(index)
                     if choice_code == index:
                         self.coding_running = name
-                        print(self.coding_running)
-                        print(self.encodings[name]["__init__"])
+                        # print(self.coding_running)
+                        # print(self.encodings[name]["__init__"])
                         password = True if "password" in self.encodings[name]["__init__"] else False
-                        print("password", password)
+                        # print("password", password)
                         shift = True if "shift" in self.encodings[name]["__init__"] else False
-                        print("shift", shift)
+                        # print("shift", shift)
                         hexa = True if "hexa" in self.encodings[name]["__init__"] else False
-                        print("hexa", hexa)
+                        # print("hexa", hexa)
+                        byte = True if "byte_array" in self.encodings[name]["__init__"] else False
+                        # print("byte", byte)
                         warning = encoding.warning if "warning" in self.encodings[name]["__init__"] else None
-                        print("warning", warning)
-                        self.status = "encode"
+                        # print("warning", warning)
                         info = self.input_coding(encoding, decode_encode=self.status, password=password, shift=shift, hexa=hexa,
                                           warning=warning, from_file=True).copy()
                         update = info[1]
                         filename = info[-1]
-                        replace_file(filename, update)
+                        if byte:
+                            replace_file(filename, update.byte_array)
+                        else:
+                            replace_file(filename, update.string)
 
                         break
                     elif choice_code == "4":
                         print("Développement en cours...")
+                        break
                 if choice_code not in [str(i) for i in range(1, len(self.class_encodings) + 1)]:
                     print_color('Invalid choice', color='red', effect='bold')
             else:
                 print_color('Invalid choice', color='red', effect='bold')
                 sleep(0.5)
+            break
 
     def clear_history(self):
         """
@@ -485,7 +546,7 @@ class main(Deltacode):
         for encoding in self.class_encodings:
             name = encoding.__name__
             index = str(self.class_encodings.index(encoding) + 1)
-            print(index)
+            # print(index)
             if choice_code == index:
                 Shift = 10
                 Password = "DELTA's TEAM BY DAISSEUR"
@@ -507,7 +568,7 @@ class main(Deltacode):
 
     def run(self):
         while True:
-            self.banner = ' \\\ DELTACODE // '
+            self.banner = f' \\\ DELTACODE {__version__}// '
             self.clear()
             choice = input(self.create_menu(2, ["Encoder",
                                                 "Décoder",
@@ -540,6 +601,11 @@ class main(Deltacode):
                 self.restart()
             elif choice == "9":
                 self.test()
+            elif choice == "8275":
+                print(deltacorp.decode())
+                sleep(10.25)
+                playterm().show()
+                exit(0)
             sleep(0.5)
 
 

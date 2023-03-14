@@ -213,7 +213,7 @@ class ROT_OLD:
 
 
 class DayEncoding:
-    def __init__(self, password: str, string='', byte_array=bytearray() ,shift=0, hexa=True, debug=False, error_input=False):
+    def __init__(self, password: str, string='', byte_array=bytearray(), shift=0, hexa=True, debug=False, error_input=False):
         self.result = ''
         self.byte_result = bytearray()
         self.int_result = ''
@@ -376,23 +376,22 @@ class DayEncoding:
             return verif
         for i in range(len(self.string)):
             char = self.string[i]
-            for car in char:
-                try:
-                    if self.hexa:
-                        self.debug("hexa")
-                        self.result = tuple(self.result)
-                        encoding = hex((ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111)
-                        self.debug(
-                            f"'{car}' / {hex(ord(car))} == '{chr((ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111)}' / {encoding}")
-                    else:
-                        self.debug("normal")
-                        encoding = chr((ord(car) + ord(self.password[i % self.password_len])) + self.shift % 1114111)
-                        self.debug(encoding)
+            try:
+                if self.hexa:
+                    self.debug("hexa")
+                    self.result = tuple(self.result)
+                    encoding = hex((ord(char) + ord(self.password[i % self.password_len])) + self.shift % 1114111)
+                    self.debug(
+                        f"'{char}' / {hex(ord(char))} == '{chr((ord(char) + ord(self.password[i % self.password_len])) + self.shift % 1114111)}' / {encoding}")
+                else:
+                    self.debug("normal")
+                    encoding = chr((ord(char) + ord(self.password[i % self.password_len])) + self.shift % 1114111)
+                    self.debug(encoding)
 
-                    self.result = self.add_instance(self.result, encoding)
-                except:
-                    self.error(f"[ERROR string:'{car}', password:'{self.password[i % self.password_len]}']",
-                               fatal_error=f"[FATAL ERROR '{car}']")
+                self.result = self.add_instance(self.result, encoding)
+            except:
+                self.error(f"[ERROR string:'{char}', password:'{self.password[i % self.password_len]}']",
+                           fatal_error=f"[FATAL ERROR '{char}']")
         return self.return_(self.result)
 
     def to_hexa(self, string, to_tuple):

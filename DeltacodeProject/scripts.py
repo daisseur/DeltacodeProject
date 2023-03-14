@@ -19,7 +19,12 @@ bytes_ext = [
     '.avi', '.flv', '.wmv', '.rm', '.rmvb', '.asf', '.mpeg', '.mpg',  # Autres formats de vidéos
     '.mid', '.midi', '.kar', '.rmi', '.m4p', '.m4b',  # Autres formats de musique
     '.cr2', '.nef', '.sr2', '.orf', '.rw2', '.pef', '.arw',  # Formats d'images RAW
+    '.lnk'  # Raccourci
 ]
+
+def get_file_ex(filename):
+    ext = filename[filename.index("."):]
+    return ext
 
 def chercher(txt, premier, deuxieme, replace=False):
     if deuxieme == "'":

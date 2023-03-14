@@ -9,6 +9,7 @@ DeltacodeProject/decode.py
 DeltacodeProject/encode.py
 DeltacodeProject/encodings.py
 DeltacodeProject/encodings2.py
+DeltacodeProject/encodings2_1.py
 DeltacodeProject/gui.py
 DeltacodeProject/main.py
 DeltacodeProject/new_encoding.py

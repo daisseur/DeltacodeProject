@@ -6,13 +6,13 @@ print(sys.argv)
 print(os.getcwd())
 try:
     from DeltacodeProject.encodings2 import DayEncoding
-    from DeltacodeProject.scripts import bytes_ext
+    from DeltacodeProject.scripts import *
 except Exception:
     os.system("py -m pip install --upgrade DeltacodeProject")
     os.system("pip install --upgrade DeltacodeProject")
     try:
         from DeltacodeProject.encodings2 import DayEncoding
-        from DeltacodeProject.scripts import bytes_ext
+        from DeltacodeProject.scripts import *
     except:
         raise Exception
 password = str()
@@ -40,7 +40,9 @@ for arg in sys.argv[1:]:
         rep = arg[len("rep="):]
         for file in os.listdir(rep):
             ex = "/" if os.name == "posix" else "\\"
-            files.append(rep + ex if rep[-1] != ex else '' + file)
+            files.append(rep + ex + file)
+            # files.append(rep + ex if rep[-1] != ex else '' + file)
+            print(files)
     if "print=" in arg:
         print_value = arg[len("print="):]
         if print_value.lower() in ["false", "no"]:
@@ -82,11 +84,7 @@ def write_file(filename, data, byte=False):
         open(filename, 'w').write(data)
 
 
-def get_file_ex(filename):
-    ext = filename[filename.index("."):]
-    return ext
-
-def validation():
+def get_validation():
     global validation
     if validation:
         validation = input("Êtes-vous sûr de transformer le fichier ? ")
@@ -100,12 +98,12 @@ for file in files:
         if get_file_ex(file).lower() in bytes_ext:
             coding = DayEncoding(password=password, shift=shift, hexa=False, error_input=False)
             coding = coding.encode_byte(bytearray(open(file, 'rb').read())).byte_array
-            if validation():
+            if get_validation():
                 open(file, 'wb').write(coding)
         else:
             coding = DayEncoding(password=password,
                                  shift=shift, hexa=hexa, error_input=False).encode(open(file, 'r').read()).string
-            if validation():
+            if get_validation():
                 open(file, 'w').write(coding)
         if print_value:
             print(coding)
@@ -113,12 +111,12 @@ for file in files:
         if get_file_ex(file).lower() in bytes_ext:
             coding = DayEncoding(password=password, shift=shift, hexa=False, error_input=False)
             coding = coding.decode_byte(bytearray(open(file, 'rb').read())).byte_array
-            if validation():
+            if get_validation():
                 open(file, 'wb').write(coding)
         else:
             coding = DayEncoding(password=password,
                                  shift=shift, hexa=hexa, error_input=False).decode(open(file, 'r').read()).string
-            if validation():
+            if get_validation():
                 open(file, 'w').write(coding)
         if print_value:
             print(coding)
