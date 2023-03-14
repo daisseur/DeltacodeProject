@@ -1,2 +1,2 @@
-clipboard
+keyboard
 unidecode
