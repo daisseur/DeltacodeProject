@@ -28,7 +28,6 @@ class Cesar:
     def __str__(self):
         return self.string
 
-
     def verif(self, rot, string):
         if string:
             self.string = string
@@ -41,19 +40,17 @@ class Cesar:
                 self.rot = int(self.rot)
             except:
                 raise Error("La rotation doit être un nombre /!\\")
-        if self.rot > 26:
-            raise Error("La rotation ne doit pas dépasser 26")
 
-    def encode(self, rot=0, string=''):
+    def encode(self, string='', rot=0):
         self.result = ''
         self.verif(rot=rot, string=string)
         for i in range(len(self.string)):
             char = no_accent_char(char=self.string[i])
             try:
                 if char in self.lower:
-                    self.result += self.lower[self.lower.index(char) + self.rot % 26]
+                    self.result += self.lower[(self.lower.index(char) + self.rot) % 26]
                 elif char in self.upper:
-                    self.result += self.upper[self.upper.index(char) + self.rot % 26]
+                    self.result += self.upper[(self.upper.index(char) + self.rot) % 26]
                 else:
                     self.result += char
             except:
@@ -63,15 +60,15 @@ class Cesar:
                     self.result += f"[ERROR string:'{self.upper.index(char)}', rot:'{self.rot}']"
         return Cesar(rot=self.rot, string=self.result)
 
-    def decode(self, rot=0, string=''):
+    def decode(self, string='', rot=0):
         self.result = ''
         self.verif(rot=rot, string=string)
         for i in range(len(self.string)):
             char = no_accent_char(char=self.string[i])
             if char in self.lower:
-                self.result += self.lower[self.lower.index(char) - self.rot % 26]
+                self.result += self.lower[(self.lower.index(char) - self.rot) % 26]
             elif char in self.upper:
-                self.result += self.upper[self.upper.index(char) - self.rot % 26]
+                self.result += self.upper[(self.upper.index(char) - self.rot) % 26]
             else:
                 self.result += char
 
@@ -135,6 +132,7 @@ class ROT:
     def decode(self, string='', password=''):
         self.result = ''
         self.verif(string=string, password=password)
+
         for i in range(len(self.string)):
             char = self.string[i]
             try:
@@ -222,6 +220,7 @@ class DayEncoding:
         self.byte_array = byte_array
         self.password = password
         self.shift = shift
+        self.estim = 0
         if hexa:
             self.hexa = True
         else:
@@ -347,12 +346,22 @@ class DayEncoding:
             print_color(*args, color='green', effect='bold')
             time.sleep(0.005)
 
+    def get_estim(self):
+        t1 = time.perf_counter()
+        random_list = []
+        for i in range(len(self.byte_array)):
+            byte = self.byte_array[i]
+            calc = ((byte + ord(self.password[i % self.password_len])) + self.shift) % 256
+            random_list.append(calc)
+            break
+        return (time.perf_counter()-t1) * len(self.byte_array)
 
     def encode_byte(self, byte_array=bytearray(), password='', shift=0):
         self.byte_result = bytearray()
         verif = self.verif_byte(byte_array=byte_array, password=password, shift=shift)
         if verif:
             return verif
+        self.estim = self.get_estim()
         for i in range(len(self.byte_array)):
             byte = self.byte_array[i]
             try:

@@ -9,8 +9,8 @@ from DeltacodeProject import __version__
 from DeltacodeProject import *
 from time import sleep
 import string as s
-
-
+import subprocess
+import signal
 
 class Deltacode:
     """                                                 \\\ DELTA-ENCODING //
@@ -20,11 +20,11 @@ class Deltacode:
     """
 
     def __init__(self, *args):
-        print(args[0])
+        # print(args[0])
         self.encodings = {}
         self.class_encodings = []
         for class_ in args[0]:
-            print(class_)
+            # print(class_)
             self.class_encodings.append(class_)
             self.encodings[class_.__name__] = {}
             new_dict = self.encodings[class_.__name__]
@@ -35,8 +35,8 @@ class Deltacode:
                 new_dict["description"] = new_dict["__init__"]["description"]
             if "abbr" in new_dict["__init__"]:
                 new_dict["description"] = new_dict["__init__"]["abbr"]
-        print(self.encodings)
-        print(self.class_encodings)
+        # print(self.encodings)
+        # print(self.class_encodings)
         for class_ in self.class_encodings:
             self.create_class_func(class_.__name__, class_)
         self.use_copy = True
@@ -121,19 +121,25 @@ class Deltacode:
 
 
     def input_coding(self, coding_class, decode_encode: str, shift=False, password=True, warning="None",
-                     from_file=False, hexa=False):
+                     from_file=False, hexa=False, byte=False):
         self.status = decode_encode
-        byte = False
         self.clear()
-        self.hexa = input("Voulez-vous utiliser l'encodage hexadecimal ? ")
-        if self.hexa.lower() in ["o", "y", "yes", "oui"]:
-            self.hexa = True
-        else:
-            self.hexa = False
+        if hexa:
+            self.hexa = input("Voulez-vous utiliser l'encodage hexadecimal ? ")
+            if self.hexa.lower() in ["o", "y", "yes", "oui"]:
+                self.hexa = True
+            else:
+                self.hexa = False
 
         def ifif(opt):
+            if password:
+                opt = opt(password=Password)
+            else:
+                opt = opt(rot=Password)
             if hexa:
                 opt.hexa = self.hexa
+            if shift:
+                opt.shift = Shift
             if byte:
                 opt.byte_array = coding.byte_array
                 opt.string = coding.string
@@ -146,11 +152,11 @@ class Deltacode:
                 kwargs["hexa"] = self.hexa
             if shift:
                 kwargs["shift"] = Shift
-            if Password:
+            if password:
                 kwargs["password"] = Password
             else:
                 kwargs["rot"] = Password
-            # print(byte, isinstance(Text, bytearray))
+            print(byte, isinstance(Text, bytearray))
             if byte:
                 if self.status == "encode":
                     coding = coding_class(**kwargs).encode_byte(Text)
@@ -158,27 +164,26 @@ class Deltacode:
                     coding = coding_class(**kwargs).decode_byte(Text)
                 self.add_history(Password, Text, coding.byte_array, decode_encode, shift=str(Shift))
             else:
-                kwargs["string"] = Text
                 if self.status == "encode":
-                    coding = coding_class(**kwargs).encode()
+                    coding = coding_class(**kwargs).encode(Text)
                 else:
-                    coding = coding_class(**kwargs).decode()
+                    coding = coding_class(**kwargs).decode(Text)
                 self.add_history(Password, Text, coding.string, decode_encode, shift=str(Shift))
             return coding
 
         def input_return():
             if shift:
                 if from_file:
-                    return [Text, ifif(coding_class(password=Password, string=coding.string, shift=Shift)), self.filename]
-                return [Text, ifif(coding_class(password=Password, string=coding.string, shift=Shift))]
+                    return [Text, coding, self.filename]
+                return [Text, coding]
             elif password is False:
                 if from_file:
-                    return [Text, ifif(coding_class(rot=Password, string=coding.string, shift=Shift)), self.filename]
-                return [Text, ifif(coding_class(rot=Password, string=coding.string, shift=Shift))]
+                    return [Text, coding, self.filename]
+                return [Text, coding]
             else:
                 if from_file:
-                    return [Text, ifif(coding_class(password=Password, string=coding.string)), self.filename]
-                return [Text, ifif(coding_class(password=Password, string=coding.string))]
+                    return [Text, coding, self.filename]
+                return [Text, coding]
 
         def get_rot():
             while True:
@@ -222,6 +227,8 @@ class Deltacode:
                 Text = input('Texte : ')
                 self.text_running = Text
         if from_file:
+            if get_file_ex(self.filename) in bytes_ext and byte is False:
+                return [False]
             byte = True if isinstance(Text, bytearray) else False
         if shift:
             Shift = input("Utiliser le shift ? ")
@@ -247,6 +254,7 @@ class Deltacode:
                 self.shift_running = Shift
                 return input_return()
         else:
+            Shift = "None"
             coding = coding_option()
             print_color(coding.string, color='blue')
         self.text_running = coding.string
@@ -299,7 +307,8 @@ class main(Deltacode):
 
     def __init__(self, *args, copy=None):
         super().__init__(args)
-        sys.tracebacklimit = 0
+        # sys.tracebacklimit = 0
+        signal.signal(signal.SIGINT, signal_handler)
 
         if copy is None:
             self.use_copy = input(
@@ -426,7 +435,7 @@ class main(Deltacode):
                         break
                 coding = info[1].decode()
                 print_color(coding, color="blue")
-                self.add_history(Password=info[1].password, Text=info[1], coding=coding.string, decode_encode=self.status, shift=coding.shift if shift else "None")
+                self.add_history(Password=info[1].password if password else info[1].rot, Text=info[1], coding=coding.string, decode_encode=self.status, shift=coding.shift if shift else "None")
                 break
             elif choice_code == "4":
                 print("Développement en cours...")
@@ -476,7 +485,10 @@ class main(Deltacode):
                         warning = encoding.warning if "warning" in self.encodings[name]["__init__"] else None
                         # print("warning", warning)
                         info = self.input_coding(encoding, decode_encode=self.status, password=password, shift=shift, hexa=hexa,
-                                          warning=warning, from_file=True).copy()
+                                          warning=warning, from_file=True, byte=byte).copy()
+                        if info[0] is False:
+                            print_color('Vous ne pouvez pas choisir cet encodage pour ce fichier', color='red', effect='bold')
+                            break
                         update = info[1]
                         filename = info[-1]
                         if byte:
@@ -532,13 +544,13 @@ class main(Deltacode):
         print_color("La sauvegarde de l'historique a été supprimé", effect="italic")
 
     def restart(self):
-        try:
-            os.execl(__file__, *sys.argv)
-            exit(0)
-        except:
-            print_color("Cette fonction n'est actuellement pas fonctionnel sur votre appareil", color="red",
-                        effect="bold")
-            sleep(1.5)
+        command = [sys.executable] + sys.argv
+        for arg in command:
+            if "DeltacodeProject\\__main__.py" in arg:
+                command = command + ["-new"]
+        # print(command)
+        subprocess.Popen(command)
+        sys.exit(88)
 
     def test(self):
         choice_code = input(self.create_menu(2, list(self.encodings.keys())))
@@ -567,6 +579,7 @@ class main(Deltacode):
             print_color('Invalid choice', color='red', effect='bold')
 
     def run(self):
+        wait = 0.5
         while True:
             self.banner = f' \\\ DELTACODE {__version__}// '
             self.clear()
@@ -598,6 +611,7 @@ class main(Deltacode):
             elif choice == "7":
                 self.del_save()
             elif choice == "8":
+                wait = 0
                 self.restart()
             elif choice == "9":
                 self.test()
@@ -606,8 +620,10 @@ class main(Deltacode):
                 sleep(10.25)
                 playterm().show()
                 exit(0)
-            sleep(0.5)
-
+            sleep(wait)
 
 if __name__ == '__main__' or "debug" in sys.argv:
+    signal.signal(signal.SIGINT, signal_handler)
     main(Cesar, ROT, DayEncoding, copy=True).run()
+
+

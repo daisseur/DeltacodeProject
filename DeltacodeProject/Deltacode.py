@@ -325,7 +325,7 @@ class Deltacode:
         self.text_running = "None"
         self.shift_running = 0
         if os.path.exists("historique.txt"):
-            with open("historique.txt", 'r') as f: self.history = f.read()
+            with open("historique.txt", 'r', encoding='UTF-8') as f: self.history = f.read()
         else: self.history = "\n"
         if os.name == "posix": self.OS = "LINUX"
         elif os.name == "nt": self.OS = "WINDOWS"
@@ -475,7 +475,7 @@ class Deltacode:
     def create_menu(self, tab: int, lst: list, encadr="│", centery: int = None):
         if not centery:
             centery = self.center_y
-        print(centery)
+        # print(centery)
         menu_tab = "\t" * tab + encadr
         end = encadr
         menu = """"""

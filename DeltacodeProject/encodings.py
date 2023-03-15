@@ -26,9 +26,9 @@ class Cesar:
             char = no_accent_char(char=self.string[i])
             try:
                 if char in self.lower:
-                    result += self.lower[self.lower.index(char) + self.rot % 26]
+                    result += self.lower[(self.lower.index(char) + self.rot) % 26]
                 elif char in self.upper:
-                    result += self.upper[self.upper.index(char) + self.rot % 26]
+                    result += self.upper[(self.upper.index(char) + self.rot) % 26]
                 else:
                     result += char
             except:
@@ -50,9 +50,9 @@ class Cesar:
         for i in range(len(self.string)):
             char = no_accent_char(char=self.string[i])
             if char in self.lower:
-                result += self.lower[self.lower.index(char) - self.rot % 26]
+                result += self.lower[(self.lower.index(char) - self.rot) % 26]
             elif char in self.upper:
-                result += self.upper[self.upper.index(char) - self.rot % 26]
+                result += self.upper[(self.upper.index(char) - self.rot) % 26]
             else:
                 result += char
 

@@ -1,4 +1,6 @@
 from unidecode import unidecode
+import sys
+from time import sleep
 
 bytes_ext = [
     '.png', '.jpg', '.jpeg', '.gif', '.webp', '.ico',  # Images
@@ -21,6 +23,19 @@ bytes_ext = [
     '.cr2', '.nef', '.sr2', '.orf', '.rw2', '.pef', '.arw',  # Formats d'images RAW
     '.lnk'  # Raccourci
 ]
+
+def loading(string: str, time=0.01):
+    for char in string:
+        print(char, flush=True, end='')
+        sleep(time)
+    print()
+
+def signal_handler(signal, frame):
+    if signal == 88:
+        sys.exit(0)
+    else:
+        loading("Sortie du programme...")
+        sys.exit(0)
 
 def get_file_ex(filename):
     ext = filename[filename.index("."):]
