@@ -2,11 +2,11 @@
 """
 Encoder et décoder du texte/bytes
 """
-from .more import playterm
+from more import playterm
 from DeltacodeProject.encodings2 import DayEncoding
 
 __title__ = "DeltacodeProject"
-__version__ = "0.7.31.0"
+__version__ = "0.7.31.1"
 
 
 
