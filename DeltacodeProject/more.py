@@ -1,8 +1,13 @@
+import os
+import sys
+
 import keyboard
 from time import sleep
 import time
 from os import system as cmd
 from os import get_terminal_size
+from random import randint
+import signal
 
 nocolor = "\033[0;0m"
 colors = {
@@ -32,14 +37,21 @@ def print_color(*args, color='white', effect='classic', highlight='False', end=F
         print(highlights[highlight] + colors[color] + effects[effect] + ' '.join(str(arg) for arg in args) + nocolor)
 
 class playterm:
-    def __init__(self):
+    def __init__(self, points=1, speed=0.001):
         self.term_size = get_terminal_size()
-
-        self.map = [[i for i in (self.term_size.columns-2)*'█'] for i in range(self.term_size.lines-5)]
+        self.speed = speed
+        self.map = [[*(self.term_size.columns-2)*'█'] for i in range(self.term_size.lines-5)]
 
         # set outlines
         self.map.insert(0, [i for i in len(self.map[0]) * "-"])
         self.map.extend([(len(self.map[0]) * " -").split()])
+        self.points = []
+        for n in range(points):
+            point = [randint(2, len(self.map)-2), randint(2, len(self.map[1])-1)]
+            while point in self.points:
+                point = [randint(2, len(self.map)-1), randint(2, len(self.map[1])-1)]
+            self.points.append(point)
+            self.map[point[0]][point[1]] = "$"
         for line in self.map:
             line.insert(0, "|")
             line.extend(["|"])
@@ -99,12 +111,11 @@ class playterm:
                 print("\033[0;0m")
             else:
                 print(f"\033[34;1m{''.join(line)}\033[0;0m")
-        self.short_time.append(time.perf_counter() - s)
-        print(min(self.short_time))
+        # self.short_time.append(time.perf_counter() - s)
+        # print(min(self.short_time))
 
 
     def show(self):
-        print("press z, s, d or q\n")
         self.show_map(self.map)
         while True:
             if keyboard.is_pressed("z"):
@@ -118,9 +129,28 @@ class playterm:
             else:
                 continue
             cmd("cls")
+            print("press z, s, d or q\n")
             print(location)
             self.show_map(self.map)
-            sleep(0.0001)
+            sleep(self.speed)
+            if location in self.points:
+                del self.points[self.points.index(location)]
+                if len(self.points) == 0:
+                    break
 
 if __name__ == "__main__":
-    playterm().show()
+    if "start" in sys.argv:
+        speed = float(sys.argv[-1])
+        blevel = int(sys.argv[-2])
+        points = blevel * 1.4
+    else:
+        speed = 0.1
+        points = 1
+        blevel = 1
+    for level in range(blevel, 10):
+        playterm(points=int(round(points)), speed=speed).show()
+        speed = speed/7 * 3
+        print(speed)
+        points = level*1.40
+        print(points)
+        sleep(2)

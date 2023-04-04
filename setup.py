@@ -4,7 +4,7 @@ setup(
     version='0.7.31.0',
     author='daisseur',
     author_email='daisseur@gmail.com',
-    packages=['DeltacodeProject'],
+    packages=['DeltacodeProject', 'DeltacodeProject.things'],
     url='https://github.com/daisseur/Deltacode_project',
     description="Encoder et décoder du texte à l'aide de pluisieurs types d'encodages",
     long_description=open('README.md').read(),

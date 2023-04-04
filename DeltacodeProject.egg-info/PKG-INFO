@@ -53,15 +53,15 @@ Bienvenue sur mon projet !
 
 
 # Menu personalisable et classes d'encodages personalisables
-Pour faciliter le dÃ©veloppement de nouveaux encodages une version adptative menu a Ã©tÃ© crÃ©Ã©
-On peut par exemple intÃ©grer ses propres classes et les tester depuis le menu
+Pour faciliter le développement de nouveaux encodages une version adptative menu a été créé
+On peut par exemple intégrer ses propres classes et les tester depuis le menu
 
 En test actuellement
 ```py
 from DeltacodeProject.DeltacodeNew import main
 from DeltacodeProject.encodings2 import *
 
-# InsÃ©rer les encodages voulus
+# Insérer les encodages voulus
 main(ROT, DayEncoding, Cesar).run()
 ```
 
@@ -83,11 +83,11 @@ Il est possible de l'installer avec pip:
 ## Les encodages
 > En quoi consiste-il ?
 
-A **dÃ©coder et encoder** du texte, plusieurs encodage sont disponibles:
+A **décoder et encoder** du texte, plusieurs encodage sont disponibles:
 
 ![CODING CHOICE](https://user-images.githubusercontent.com/100715068/192147470-1abae55e-1e70-49a4-ac8b-e62df8c5283e.png)
 
-Avant de refaire les encodages, la seule faÃ§on d'encoder Ã©tait de faire:
+Avant de refaire les encodages, la seule façon d'encoder était de faire:
 ```py
 from DeltacodeProject.encodings import *
 encoding = DayEncoding(password="my password", string="Mon texte incroyable", shift=0)
@@ -95,21 +95,21 @@ encoded = encoding.encode()
 decoded = DayEncoding(password="my password", string=encoded, shift=0).decode()
 ```
 
-Mais j'ai changÃ© la mÃ©canique pour qu'il soit plus facile dÃ©coder et d'encoder
-Le but est de pouvoir encoder et dÃ©coder un objet mais en pouvant garder les paramÃ¨tre comme le mot de passe ou le shift, il y a plusieurs cas de figure possible
+Mais j'ai changé la mécanique pour qu'il soit plus facile décoder et d'encoder
+Le but est de pouvoir encoder et décoder un objet mais en pouvant garder les paramètre comme le mot de passe ou le shift, il y a plusieurs cas de figure possible
 
 1.
 ```py
 # On importe les classes d'encodages
 from DeltacodeProject.encodings2 import *
 
-# On crÃ©Ã© un objet `DayEncoding` avec l'argument `password` obligatoire mais sans fournir de texte
+# On créé un objet `DayEncoding` avec l'argument `password` obligatoire mais sans fournir de texte
 encoding = DayEncoding(password="Mon mot de passe")
 
-# On encode du texte grÃ¢ce Ã  la fonction `encode` de la classe
-encoded = encoding.encode("Cette conversation est privÃ©e et secrÃ¨te")
+# On encode du texte grâce à la fonction `encode` de la classe
+encoded = encoding.encode("Cette conversation est privée et secrète")
 
-# Et on decode le texte encodÃ©
+# Et on decode le texte encodé
 decoded = encoded.decode()
 ```
 
@@ -118,13 +118,13 @@ decoded = encoded.decode()
 # On importe les classes d'encodages
 from DeltacodePRoject.encodings2 import *
 
-# On crÃ©Ã© un bojet `DayEncoding` avec l'argument `password` et `string`
-encoding = DayEncoding(password="Mon mot de passe", string="Cette conversation est privÃ©e et secrÃ¨te")
+# On créé un bojet `DayEncoding` avec l'argument `password` et `string`
+encoding = DayEncoding(password="Mon mot de passe", string="Cette conversation est privée et secrète")
 
 # On encode directement le texte dans l'objet avec la foncton `encode`
 encoded = encoding.encode()
 
-# Et on dÃ©code de la mÃªme faÃ§on
+# Et on décode de la même façon
 decoded = encoded.decode()
 ```
 
@@ -133,13 +133,13 @@ decoded = encoded.decode()
 # On importe les classes d'encodages
 from DeltacodeProject.encodings2 import *
 
-# On crÃ©Ã© un objet `DayEncoding` avec l'argument `password` obligatoire mais sans fournir de texte
+# On créé un objet `DayEncoding` avec l'argument `password` obligatoire mais sans fournir de texte
 encoding = DayEncoding(password="Mon mot de passe")
 
-# On encode du texte grÃ¢ce Ã  la fonction `encode` de la classe
-encoded = encoding.encode("Cette conversation est privÃ©e et secrÃ¨te")
+# On encode du texte grâce à la fonction `encode` de la classe
+encoded = encoding.encode("Cette conversation est privée et secrète")
 
-# Et on peut directement dÃ©coder en mettant la chaine de caractÃ¨re Ã  dÃ©coder en argument
+# Et on peut directement décoder en mettant la chaine de caractère à décoder en argument
 decoded = encoding.decode(encoded.string)
 # On peut aussi faire
 decoded = encoding.decode(encoded.result)
@@ -149,65 +149,65 @@ decoded = encoding.decode(encoded.result)
 <div id="cesar"/>
 
 ### LE CODE CESAR (CESAR)
-La version plus 'classique' de la rotation est *le code cesar*, on fait exactement la mÃªme opÃ©ration mais avec l'alphabet. Mais le dÃ©savantage de cette mÃ©thode est que les charactÃ¨res spÃ©ciaux de sont pas encodÃ©s et ignorÃ©s comme les espaces.
+La version plus 'classique' de la rotation est *le code cesar*, on fait exactement la même opération mais avec l'alphabet. Mais le désavantage de cette méthode est que les charactères spéciaux de sont pas encodés et ignorés comme les espaces.
 
 **Par exemple:**
-Si l'on prend comme mot de passe: *delta pwd* et comme texte Ã  encoder: *github & compagnie*
+Si l'on prend comme mot de passe: *delta pwd* et comme texte à encoder: *github & compagnie*
 
-- *(premier charactÃ¨re du texte Ã  encoder =)* **g** + *(premier charactÃ¨re du mot de passe =)* **d**
-- On rÃ©cupÃ¨re leur valeur respective dans _**l'alphabet**_ *(a=1)* et on les aditionnent, ce qui nous donne:
+- *(premier charactère du texte à encoder =)* **g** + *(premier charactère du mot de passe =)* **d**
+- On récupère leur valeur respective dans _**l'alphabet**_ *(a=1)* et on les aditionnent, ce qui nous donne:
 - *g* = **7** + *d* = **4**
 - **= 11**
-- Valeur que l'on va rÃ©cupÃ©rer dans la l'alphabet
-- Notre charactÃ¨re encodÃ© est donc **k**, ainsi **g** = *k*
+- Valeur que l'on va récupérer dans la l'alphabet
+- Notre charactère encodé est donc **k**, ainsi **g** = *k*
 
 
-Cette opÃ©ration se rÃ©pÃ¨te sur tous les chractÃ¨res du texte Ã  encoder
+Cette opération se répète sur tous les chractères du texte à encoder
 
 
 <div id="rotation"/>
 
 ### ROTATION AVEC CARACTERES AFFICHABLES (ROT)
-Le mot de passe est transformÃ© en en sa valeur dans une liste regroupant tous les caractÃ¨re affichable 
-(*```0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ \t\n\r\x0b\x0c```*) `\t` = tabulation, `\n` = retour Ã  la ligne, `\r` = ligne suivante, `\x0b` = tabulation verticale et `\x0c` = saut de page.
+Le mot de passe est transformé en en sa valeur dans une liste regroupant tous les caractère affichable 
+(*```0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ \t\n\r\x0b\x0c```*) `\t` = tabulation, `\n` = retour à la ligne, `\r` = ligne suivante, `\x0b` = tabulation verticale et `\x0c` = saut de page.
 
 **Par exemple:**
-Si l'on prend comme mot de passe: *delta pwd* et comme texte Ã  encoder: *github & compagnie*
+Si l'on prend comme mot de passe: *delta pwd* et comme texte à encoder: *github & compagnie*
 
-- *(premier caractÃ¨re du texte Ã  encoder =)* **g** + *(premier caractÃ¨re du mot de passe =)* **d**
-- On rÃ©cupÃ¨re leur valeur respective dans la _**liste des caractÃ¨res affichables**_ et on les aditionnent, ce qui nous donne:
+- *(premier caractère du texte à encoder =)* **g** + *(premier caractère du mot de passe =)* **d**
+- On récupère leur valeur respective dans la _**liste des caractères affichables**_ et on les aditionnent, ce qui nous donne:
 - *g* = **16** + *d* = **13**
 - **= 29**
-- Valeur que l'on va rÃ©cupÃ©rer dans la table ascii
-- Notre caractÃ¨re encodÃ© est donc **t**, ainsi **g** = *t*
+- Valeur que l'on va récupérer dans la table ascii
+- Notre caractère encodé est donc **t**, ainsi **g** = *t*
 
-Cette opÃ©ration se rÃ©pÃ¨te sur tous les chractÃ¨res du texte Ã  encoder ce qui nous donne **twOKE5}IBzDvJxcD**
+Cette opération se répète sur tous les chractères du texte à encoder ce qui nous donne **twOKE5}IBzDvJxcD**
 
 
 <div id="dayencoding"/>
 
 ### LA ROTATION AVEC TOUS LES CARACTERES EXISTANTS (DAYENCODING)
-Le mot de passe est transformÃ© en en sa valeur dans la table ascii que l'on peut rÃ©cupÃ©rÃ© avec ord()
+Le mot de passe est transformé en en sa valeur dans la table ascii que l'on peut récupéré avec ord()
 
 **Par exemple:**
-Si l'on prend comme mot de passe: *delta pwd* et comme texte Ã  encoder: *github & compagnie*
+Si l'on prend comme mot de passe: *delta pwd* et comme texte à encoder: *github & compagnie*
 
-- *(premier charactÃ¨re du texte Ã  encoder =)* **g** + *(premier charactÃ¨re du mot de passe =)* **d**
-- On rÃ©cupÃ¨re leur valeur respective dans la _**table ascii**_ et on les aditionnent, ce qui nous donne:
+- *(premier charactère du texte à encoder =)* **g** + *(premier charactère du mot de passe =)* **d**
+- On récupère leur valeur respective dans la _**table ascii**_ et on les aditionnent, ce qui nous donne:
 - *g* = **103** + *d* = **100**
 - **= 203**
-- Valeur que l'on va rÃ©cupÃ©rer dans la table ascii
-- Notre charactÃ¨re encodÃ© est donc **Ã‹**, ainsi **g** = *Ã‹*
+- Valeur que l'on va récupérer dans la table ascii
+- Notre charactère encodé est donc **Ë**, ainsi **g** = *Ë*
 
-Cette opÃ©ration se rÃ©pÃ¨te sur tous les chractÃ¨res du texte Ã  encoder
+Cette opération se répète sur tous les chractères du texte à encoder
 
 #### LA CONVERSION HEXADECIMALE
-Il est possible de convertir son rÃ©sultat en valeurs hexadecimales
-L'option est par dÃ©faut activÃ© car de nombreux caractÃ¨res de la table ASCII sont des tabulations et peuvent dÃ©regler l'affichage du terminal
+Il est possible de convertir son résultat en valeurs hexadecimales
+L'option est par défaut activé car de nombreux caractères de la table ASCII sont des tabulations et peuvent déregler l'affichage du terminal
 
 
 <div id="menu"/>
 
 ## LE MENU
-Un menu a Ã©tÃ© mis en place et est intÃ©grer au programme, ils vous permettra de naviguer entre les diffÃ©rents encodages et options d'encodage, il peut s'adapter Ã  la taille de votre terminal.
+Un menu a été mis en place et est intégrer au programme, ils vous permettra de naviguer entre les différents encodages et options d'encodage, il peut s'adapter à la taille de votre terminal.
 ![MENU](https://user-images.githubusercontent.com/100715068/192147511-73e89c0b-d1c7-4046-a291-c848e6f1810e.png)

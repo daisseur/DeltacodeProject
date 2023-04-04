@@ -2,7 +2,7 @@
 """
 Encoder et décoder du texte/bytes
 """
-from .things.more import playterm
+from .more import playterm
 from DeltacodeProject.encodings2 import DayEncoding
 
 __title__ = "DeltacodeProject"
