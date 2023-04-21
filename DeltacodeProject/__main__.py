@@ -31,7 +31,7 @@ def code():
 			case "2":
 				old()
 			case other:
-				from more import playterm
+				from DeltacodeProject.more import playterm
 				playterm().show()
 		
 if __name__ == "__main__":
