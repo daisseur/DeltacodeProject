@@ -1,13 +1,12 @@
 # __main__.py
 import sys
-from DeltacodeProject.Deltacode import main
 
 
 def code():
 	"""Encode & Decode"""
 	def ui():
-		from DeltacodeProject.main import main as ui
-		ui().run()
+		from DeltacodeProject.GUI import GUI
+		GUI().run()
 
 	def new():
 		from DeltacodeProject.DeltacodeNew import main as menu
@@ -31,8 +30,15 @@ def code():
 			case "2":
 				old()
 			case other:
-				from DeltacodeProject.more import playterm
-				playterm().show()
+				from DeltacodeProject.game import playterm
+				speed = 0.1
+                points = 1
+                for level in range(1, 10):
+                    # playterm(points=int(round(points)), speed=speed).show()
+                    wrapper(playterm(points=int(round(points)), speed=speed).show)
+                    speed = speed/7 * 3
+                    points = points*1.40
+                    # sleep(2)
 		
 if __name__ == "__main__":
 	code()
