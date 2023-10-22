@@ -1,5 +1,5 @@
 from DeltacodeProject import DayEncoding
-from tkinter import *
+from customtkinter import *
 from tkinter import filedialog
 from os import listdir, getcwd
 from threading import Thread
@@ -11,7 +11,7 @@ from time import sleep
 
 class PasswordManager:
     def __init__(self):
-        self.app = Tk()
+        self.app = CTk()
         self.app.protocol("WM_DELETE_WINDOW", self.close)
         self.app.title("Password Manager")
         self.app.geometry("740x740")
@@ -22,31 +22,34 @@ class PasswordManager:
         self.status = StringVar()
         self.event = Tevent()
 
-        self.top = Frame(self.app)
-        Button(self.top, text="Reload", command=self.decode_file).grid(row=0, column=0, ipadx=10)
-        Button(self.top, text="Choisir un fichier à décoder", command=self.pick_file).grid(row=0, column=1, ipadx=30)
-        Button(self.top, text="Save", command=self.save).grid(row=0, column=2, ipadx=10)
+        self.top = CTkFrame(self.app, fg_color="transparent")
+        CTkButton(self.top, text="Reload", command=self.decode_file).grid(row=0, column=0, padx=10)
+        CTkButton(self.top, text="Choisir un fichier à décoder", command=self.pick_file).grid(row=0, column=1, padx=30)
+        CTkButton(self.top, text="Save", command=self.save).grid(row=0, column=2, padx=10)
         self.app.bind_all("<Control-s>", self.save)
         self.top.pack()
-        self.options = Frame(self.app)
-        Label(self.options, text="Password").grid(row=0, column=0), Label(self.options, text="Shift").grid(row=0, column=1)
-        self.password = Entry(self.options, width=50)
-        self.shift = Entry(self.options, width=50)
-        self.password.grid(row=1, column=0), self.shift.grid(row=1, column=1)
+        self.options = CTkFrame(self.app, fg_color="transparent")
+        CTkLabel(self.options, text="Password").grid(row=0, column=0, padx=3, pady=10)
+        CTkLabel(self.options, text="Shift").grid(row=0, column=1, padx=3, pady=10)
+        self.password = CTkEntry(self.options, width=150)
+        self.shift = CTkEntry(self.options, width=50)
+        self.password.grid(row=1, column=0, padx=3, pady=10)
+        self.shift.grid(row=1, column=1, padx=3, pady=10)
         self.options.pack()
 
-        self.file_label = Label(text=f"Fichier actuel : {self.filename}")
-        self.file_label.pack()
-        Label(textvariable=self.status).pack()
+        self.file_label = CTkLabel(self.app, text=f"Fichier actuel : {self.filename}",
+                                   font=CTkFont(family="Arial", size=13, weight="bold", underline=True))
+        self.file_label.pack(pady=4, padx=4)
+        CTkLabel(self.app, textvariable=self.status).pack()
 
-        self.result = Frame(self.app)
-        self.output_text = Text(self.result)
+        self.result = CTkFrame(self.app)
+        self.output_text = CTkTextbox(self.result, bg_color="#ababab", font=("Arial", 12, "bold"))
         self.output_text.bind('<Key>', self.update)
-        self.output_text.configure(bg="#ababab", font=("Arial", 12, "bold"))
         self.output_text.pack()
         self.result.pack()
 
         Thread(target=self.tex_size).start()
+        self.decode_file()
 
     def close(self):
         self.event.set()

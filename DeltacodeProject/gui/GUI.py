@@ -1,5 +1,5 @@
 from customtkinter import *
-from PIL import Image, ImageTk
+from tkinter import PhotoImage
 from os.path import exists, dirname, join
 from DeltacodeProject.encodings import *
 from json import loads, dumps
@@ -51,8 +51,8 @@ class App(CTk):
         super().__init__()
         self.geometry("750x750")
         self.title("DeltacodeProject")
-        ico = ImageTk.PhotoImage(Image.open(join(dirname(__file__), "..", "..", "Deltacode.ico")))
-        self.wm_iconphoto(False, ico)
+        ico = PhotoImage(file=join(dirname(__file__), "..", "..", "Deltacode.ico"))
+        self.iconphoto(False, ico)
         self.minsize(440, 370)
 
         self.save = BooleanVar(value=False)

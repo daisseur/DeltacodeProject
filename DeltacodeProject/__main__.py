@@ -4,7 +4,7 @@ import sys
 
 def code():
     """Encode & Decode"""
-    def ui():
+    def gui():
         from .gui import App
         App().mainloop()
 
@@ -17,8 +17,11 @@ def code():
         from .Deltacode import main as menu
         menu().run()
 
-    if "-ui" in sys.argv:
-        ui()
+    if "-gui" in sys.argv:
+        gui()
+    elif "-pwd" in sys.argv:
+        from DeltacodeProject.gui import PasswordManager
+        PasswordManager().show()
     elif "-new" in sys.argv:
         new()
     elif "-old" in sys.argv:

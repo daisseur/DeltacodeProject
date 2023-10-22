@@ -6,7 +6,9 @@ import signal
 import subprocess
 import sys
 import string as s
+from time import sleep
 from DeltacodeProject.scripts import *
+from DeltacodeProject import *
 from DeltacodeProject import __version__
 
 
@@ -610,7 +612,8 @@ class main(Deltacode):
             elif choice == "8275":
                 print(deltacorp.decode())
                 sleep(10.25)
-                playterm().show()
+                from DeltacodeProject.game import play
+                play()
                 exit(0)
             sleep(wait)
 

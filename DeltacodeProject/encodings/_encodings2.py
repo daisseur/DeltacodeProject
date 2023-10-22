@@ -463,6 +463,7 @@ class DayEncoding:
                     self.error(f"[ERROR, string:'{char}', password:'{self.password[i % self.password_len]}']", fatal_error=f"[FATAL ERROR '{char}']")
         return self.return_(self.result)
 
+
 class Custom:
     def __init__(self, password: str, string='', custom=s.ascii_lowercase, error_input=False):
         self.result = ''
