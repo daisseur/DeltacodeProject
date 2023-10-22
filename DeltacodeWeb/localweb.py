@@ -1,9 +1,7 @@
 from flask import *
-import json
-from markupsafe import escape
 from string import ascii_lowercase
 import inspect
-from DeltacodeProject.encodings2 import *
+from DeltacodeProject.encodings._encodings2 import *
 app = Flask(__name__, template_folder="templates", static_folder="js")
 
 def get_kwargs(class_):

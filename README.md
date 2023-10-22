@@ -20,9 +20,10 @@ Pour faciliter le développement de nouveaux encodages une version adptative men
 On peut par exemple intégrer ses propres classes et les tester depuis le menu
 
 En test actuellement
+
 ```py
 from DeltacodeProject.DeltacodeNew import main
-from DeltacodeProject.encodings2 import *
+from DeltacodeProject.encodings._encodings2 import *
 
 # Insérer les encodages voulus
 main(ROT, DayEncoding, Cesar).run()
@@ -51,8 +52,10 @@ A **décoder et encoder** du texte, plusieurs encodage sont disponibles:
 ![CODING CHOICE](https://user-images.githubusercontent.com/100715068/192147470-1abae55e-1e70-49a4-ac8b-e62df8c5283e.png)
 
 Avant de refaire les encodages, la seule façon d'encoder était de faire:
+
 ```py
-from DeltacodeProject.encodings import *
+from DeltacodeProject.encodings._encodings import *
+
 encoding = DayEncoding(password="my password", string="Mon texte incroyable", shift=0)
 encoded = encoding.encode()
 decoded = DayEncoding(password="my password", string=encoded, shift=0).decode()
@@ -62,9 +65,10 @@ Mais j'ai changé la mécanique pour qu'il soit plus facile décoder et d'encode
 Le but est de pouvoir encoder et décoder un objet mais en pouvant garder les paramètre comme le mot de passe ou le shift, il y a plusieurs cas de figure possible
 
 1.
+
 ```py
 # On importe les classes d'encodages
-from DeltacodeProject.encodings2 import *
+from DeltacodeProject.encodings._encodings2 import *
 
 # On créé un objet `DayEncoding` avec l'argument `password` obligatoire mais sans fournir de texte
 encoding = DayEncoding(password="Mon mot de passe")
@@ -92,9 +96,10 @@ decoded = encoded.decode()
 ```
 
 3.
+
 ```py
 # On importe les classes d'encodages
-from DeltacodeProject.encodings2 import *
+from DeltacodeProject.encodings._encodings2 import *
 
 # On créé un objet `DayEncoding` avec l'argument `password` obligatoire mais sans fournir de texte
 encoding = DayEncoding(password="Mon mot de passe")

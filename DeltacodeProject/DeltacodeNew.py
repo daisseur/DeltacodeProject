@@ -1,16 +1,14 @@
 # TEAM DELTA / DELTA's TEAM
 # By daisseur, discord : daisseur#7755
-
 import os
-import sys
 import shutil
-from DeltacodeProject.encodings2 import *
-from DeltacodeProject import __version__
-from DeltacodeProject import *
-from time import sleep
-import string as s
-import subprocess
 import signal
+import subprocess
+import sys
+import string as s
+from DeltacodeProject.scripts import *
+from DeltacodeProject import __version__
+
 
 class Deltacode:
     """                                                 \\\ DELTA-ENCODING //
@@ -43,7 +41,7 @@ class Deltacode:
         self.valid_char = s.printable
         self.status = "in __init__"
         self.center_y = int(
-            chercher(str(shutil.get_terminal_size()), "columns=", ",", replace=True))
+            find(str(shutil.get_terminal_size()), "columns=", ",", replace=True))
         self.banner = f' \\\ DELTACODE // '
         self.password_running = None
         self.text_running = None
@@ -67,13 +65,7 @@ class Deltacode:
     def copy(self, txt):
         if txt not in ["None", None, False, True, '']:
             if self.use_copy is True:
-                if os.name == "posix":
-                    os.system(f"echo '{str(txt)}' | xclip")
-                else:
-                    from clipboard import copy
-                    copy(txt)
-            else:
-                return
+                copy(txt)
 
     def clear(self, effect='italic', color='blue'):
         if self.OS == "LINUX":

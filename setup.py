@@ -6,7 +6,7 @@ setup(
     author_email='daisseur@gmail.com',
     packages=find_packages(),
     url='https://github.com/daisseur/Deltacode_project',
-    description="Encoder et décoder du texte à l'aide de pluisieurs types d'encodages",
+    description="Encoder et décoder du texte à l'aide de plusieurs types d'encodages",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
     license=open('LICENSE', 'r').read(),
