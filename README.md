@@ -12,23 +12,13 @@ Bienvenue sur mon projet !
 
 ----
 ### [Le menu](#menu)
+### [GUI](#gui)
 ----
 
 
 # Menu personalisable et classes d'encodages personalisables
 Pour faciliter le développement de nouveaux encodages une version adptative menu a été créé
 On peut par exemple intégrer ses propres classes et les tester depuis le menu
-
-En test actuellement
-
-```py
-from DeltacodeProject.DeltacodeNew import main
-from DeltacodeProject.encodings._encodings2 import *
-
-# Insérer les encodages voulus
-main(ROT, DayEncoding, Cesar).run()
-```
-
 
 <div id="installation"/>
 
@@ -51,24 +41,43 @@ A **décoder et encoder** du texte, plusieurs encodage sont disponibles:
 
 ![CODING CHOICE](https://user-images.githubusercontent.com/100715068/192147470-1abae55e-1e70-49a4-ac8b-e62df8c5283e.png)
 
-Avant de refaire les encodages, la seule façon d'encoder était de faire:
 
+
+<details>
+<summary><h2>Plusieurs façon d'accéder au encodages</h2></summary>
+Il y a plusieurs façon d'accéder aux classes d'encodages sachant que **_encodings2** est la références des encodages
+
+1.
 ```py
-from DeltacodeProject.encodings._encodings import *
-
-encoding = DayEncoding(password="my password", string="Mon texte incroyable", shift=0)
-encoded = encoding.encode()
-decoded = DayEncoding(password="my password", string=encoded, shift=0).decode()
+from DeltacodeProject import *  # qui importe tous les encodages par défaut et autres modules du projet
+from DeltacodeProject import DayEncoding  # pour importer seulement la classe que l'on veut
 ```
 
-Mais j'ai changé la mécanique pour qu'il soit plus facile décoder et d'encoder
+2.
+```py
+from DeltacodeProject.encodings import *  # qui importe seulement tous les encodages par défaut et les new_encodings
+from DeltacodeProject.encodings import DayEncoding  # pour importer seulement la classe que l'on veut
+```
+
+3.
+```py
+from DeltacodeProject.encodings._encodings2 import *  # qui importe toutes les classe du module d'encodage _encodings2 (celui par défaut)
+from DeltacodeProject.encodings._encodings2 import DayEncoding  # pour importer seulement la classe que l'on veut
+```
+
+</details>
+
+
+<details>
+<summary><h2>Voici les différentes façons d'encoder ou décoder</h2></summary>
+
 Le but est de pouvoir encoder et décoder un objet mais en pouvant garder les paramètre comme le mot de passe ou le shift, il y a plusieurs cas de figure possible
 
 1.
 
 ```py
 # On importe les classes d'encodages
-from DeltacodeProject.encodings._encodings2 import *
+from DeltacodeProject import *
 
 # On créé un objet `DayEncoding` avec l'argument `password` obligatoire mais sans fournir de texte
 encoding = DayEncoding(password="Mon mot de passe")
@@ -83,7 +92,7 @@ decoded = encoded.decode()
 2.
 ```py
 # On importe les classes d'encodages
-from DeltacodePRoject.encodings2 import *
+from DeltacodeProject import *
 
 # On créé un bojet `DayEncoding` avec l'argument `password` et `string`
 encoding = DayEncoding(password="Mon mot de passe", string="Cette conversation est privée et secrète")
@@ -112,6 +121,9 @@ decoded = encoding.decode(encoded.string)
 # On peut aussi faire
 decoded = encoding.decode(encoded.result)
 ```
+</details>
+
+
 
 
 <div id="cesar"/>
@@ -133,6 +145,8 @@ Si l'on prend comme mot de passe: *delta pwd* et comme texte à encoder: *github
 Cette opération se répète sur tous les chractères du texte à encoder
 
 
+
+
 <div id="rotation"/>
 
 ### ROTATION AVEC CARACTERES AFFICHABLES (ROT)
@@ -150,6 +164,8 @@ Si l'on prend comme mot de passe: *delta pwd* et comme texte à encoder: *github
 - Notre caractère encodé est donc **t**, ainsi **g** = *t*
 
 Cette opération se répète sur tous les chractères du texte à encoder ce qui nous donne **twOKE5}IBzDvJxcD**
+
+
 
 
 <div id="dayencoding"/>
@@ -174,8 +190,21 @@ Il est possible de convertir son résultat en valeurs hexadecimales
 L'option est par défaut activé car de nombreux caractères de la table ASCII sont des tabulations et peuvent déregler l'affichage du terminal
 
 
+
+
 <div id="menu"/>
 
 ## LE MENU
 Un menu a été mis en place et est intégrer au programme, ils vous permettra de naviguer entre les différents encodages et options d'encodage, il peut s'adapter à la taille de votre terminal.
 ![MENU](https://user-images.githubusercontent.com/100715068/192147511-73e89c0b-d1c7-4046-a291-c848e6f1810e.png)
+
+
+
+<div id="gui"/>
+
+## GUI
+Une gui est disponible pour accéder au module de façon facile, elle est faite avec customtkinter (et necessite donc une installation avec `pip install customtkinter`)
+
+
+![image](https://github.com/daisseur/Deltacode_project/assets/100715068/15a5b591-2599-4079-967a-2ec78ff9c347)
+
