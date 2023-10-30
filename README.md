@@ -94,7 +94,7 @@ decoded = encoded.decode()
 # On importe les classes d'encodages
 from DeltacodeProject import *
 
-# On créé un bojet `DayEncoding` avec l'argument `password` et `string`
+# On créé un objet `DayEncoding` avec l'argument `password` et `string`
 encoding = DayEncoding(password="Mon mot de passe", string="Cette conversation est privée et secrète")
 
 # On encode directement le texte dans l'objet avec la foncton `encode`
@@ -160,7 +160,7 @@ Si l'on prend comme mot de passe: *delta pwd* et comme texte à encoder: *github
 - On récupère leur valeur respective dans la _**liste des caractères affichables**_ et on les aditionnent, ce qui nous donne:
 - *g* = **16** + *d* = **13**
 - **= 29**
-- Valeur que l'on va récupérer dans la table ascii
+- Valeur que l'on va récupérer dans la _**liste des caractères affichables**_
 - Notre caractère encodé est donc **t**, ainsi **g** = *t*
 
 Cette opération se répète sur tous les chractères du texte à encoder ce qui nous donne **twOKE5}IBzDvJxcD**
